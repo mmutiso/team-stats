@@ -37,7 +37,8 @@ namespace TeamStats.Web.Controllers
             var club = new Club
             {
                 Id = Guid.NewGuid(),
-                Name = newRegistrationModel.ClubName
+                Name = newRegistrationModel.ClubName,
+                DateRegistered = DateTime.UtcNow
             };
             var person = new Person
             {
@@ -46,7 +47,8 @@ namespace TeamStats.Web.Controllers
                 Email = newRegistrationModel.Email,
                 Name = newRegistrationModel.ManagerName,
                 PhoneNumber = newRegistrationModel.PhoneNumber,
-                Type = PersonType.TeamManager
+                Type = PersonType.TeamManager,
+                ClubId = club.Id
             };
 
             _context.Add(person);

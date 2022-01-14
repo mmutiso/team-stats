@@ -10,6 +10,9 @@ using TeamStats.Web.Models;
 
 namespace TeamStats.Web.Controllers
 {
+
+    [ApiController]
+    [Route("[controller]")]
     public class AttendanceController : Controller
     {
         private readonly ILogger<AttendanceController> _logger;

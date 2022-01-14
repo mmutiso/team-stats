@@ -9,6 +9,7 @@ namespace TeamStats.Web.Models
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public DateTime DateRegistered { get; set; }
 
         public Guid ClubId { get; set; }
         public Club Club { get; set; }

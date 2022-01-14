@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -53,6 +54,14 @@ namespace TeamStats.Web.Controllers
             if (registerPlayersModel.Names.Count == 0)
                 return BadRequest(registerPlayersModel);
 
+            var teamCheck = _context.Teams
+                .Include(x=>x.Club)
+                .Where(x => x.Id == registerPlayersModel.TeamId)
+                .FirstOrDefault();
+
+            if (teamCheck is null)
+                return NotFound(registerPlayersModel);
+
             var players = new List<Person>();
             var memberships = new List<TeamMembership>();
             foreach (var item in registerPlayersModel.Names)
@@ -62,9 +71,11 @@ namespace TeamStats.Web.Controllers
                     Id = Guid.NewGuid(),
                     DateCreated = DateTime.UtcNow,
                     Name = item,
-                    Type = PersonType.Player
+                    Type = PersonType.Player,
+                    ClubId = teamCheck.Club.Id
                 };
                 players.Add(player);
+
                 var membership = new TeamMembership
                 {
                     Id = Guid.NewGuid(),

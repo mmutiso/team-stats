@@ -13,6 +13,9 @@ namespace TeamStats.Web.Models
         public DateTime DateCreated { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public Guid ClubId { get; set; }
+
+        public Club Club { get; set; }
 
     }
 }
