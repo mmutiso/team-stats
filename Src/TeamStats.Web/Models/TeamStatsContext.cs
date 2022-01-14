@@ -15,6 +15,13 @@ namespace TeamStats.Web.Models
         public DbSet<PlayerAttendance> PlayerAttendances { get; set; }
         public DbSet<TeamMembership> TeamMemberships { get; set; }
 
+        public TeamStatsContext(DbContextOptions<TeamStatsContext> options)
+            :base(options)
+        { }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSnakeCaseNamingConvention();
+        }
     }
 }
