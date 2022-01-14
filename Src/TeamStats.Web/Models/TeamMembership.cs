@@ -13,7 +13,7 @@ namespace TeamStats.Web.Models
 
         public bool Active { get; set; }
         public DateTime DateAdded { get; set; }
-        public DateTime DateRemoved { get; set; }
+        public DateTime? DateRemoved { get; set; }
 
         public Team Team { get; set; }
         public Person Player { get; set; }

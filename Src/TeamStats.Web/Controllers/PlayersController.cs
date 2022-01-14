@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TeamStats.Web.ApiModels;
+using TeamStats.Web.Models;
 
 namespace TeamStats.Web.Controllers
 {
@@ -13,23 +14,31 @@ namespace TeamStats.Web.Controllers
     [Route("[controller]")]
     public class PlayersController : Controller
     {
-
+        private readonly TeamStatsContext _context;
         private readonly ILogger<PlayersController> _logger;
-        public PlayersController(ILogger<PlayersController> logger)
+
+        public PlayersController(ILogger<PlayersController> logger, TeamStatsContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [ProducesResponseType(typeof(List<PlayersModel>),StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Get([FromQuery]GetPlayersModel getPlayersModel)
+        public IActionResult Get([FromQuery]GetPlayersModel getPlayersModel)
         {
-            await Task.CompletedTask;
+            var query = _context.TeamMemberships.Where(x => x.Player.Type == PersonType.Player);
 
+            if (getPlayersModel.TeamId.HasValue)
+                query = query.Where(x => x.TeamId == getPlayersModel.TeamId.Value);
 
-            //perform fetch
+            var players = query.Select(x => new PlayersModel
+            {
+                Id = x.PlayerId,
+                Name = x.Player.Name
+            });
 
-            return View();
+            return Ok(players);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -41,11 +50,37 @@ namespace TeamStats.Web.Controllers
                 return BadRequest(registerPlayersModel);
             }
 
-            await Task.CompletedTask;
+            if (registerPlayersModel.Names.Count == 0)
+                return BadRequest(registerPlayersModel);
 
-            //process input
+            var players = new List<Person>();
+            var memberships = new List<TeamMembership>();
+            foreach (var item in registerPlayersModel.Names)
+            {
+                var player = new Person
+                {
+                    Id = Guid.NewGuid(),
+                    DateCreated = DateTime.UtcNow,
+                    Name = item,
+                    Type = PersonType.Player
+                };
+                players.Add(player);
+                var membership = new TeamMembership
+                {
+                    Id = Guid.NewGuid(),
+                    Active = true,
+                    DateAdded = DateTime.UtcNow,
+                    PlayerId = player.Id,
+                    TeamId = registerPlayersModel.TeamId
+                };
+                memberships.Add(membership);
+            }
 
-            return Ok("Registered players succesfully");
+            _context.AddRange(players);
+            _context.AddRange(memberships);
+            await _context.SaveChangesAsync();
+
+            return Ok($"Registered {players.Count} players succesfully");
         }
     }
 }
