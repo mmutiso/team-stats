@@ -22,6 +22,8 @@ namespace TeamStats.Web
 
             services.AddControllersWithViews();
 
+
+            services.AddSwaggerGen();
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -43,6 +45,9 @@ namespace TeamStats.Web
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseRouting();
 
