@@ -26,6 +26,7 @@ namespace TeamStats.Web.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost]
         public async Task<IActionResult> Post(CaptureAttendanceModel captureAttendanceModel)
         {
             if (!ModelState.IsValid)
@@ -63,6 +64,7 @@ namespace TeamStats.Web.Controllers
         }
 
         [ProducesResponseType(typeof(List<PlayerAttendanceSummary>), StatusCodes.Status200OK)]
+        [HttpGet]
         public IActionResult Get(Guid? teamId)
         {
             var playersInTeam = _context.TeamMemberships

@@ -26,6 +26,7 @@ namespace TeamStats.Web.Controllers
 
         [ProducesResponseType(typeof(List<PlayersModel>),StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet]
         public IActionResult Get([FromQuery]GetPlayersModel getPlayersModel)
         {
             var query = _context.TeamMemberships.Where(x => x.Player.Type == PersonType.Player);
@@ -44,6 +45,7 @@ namespace TeamStats.Web.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost]
         public async Task<IActionResult> Post(RegisterPlayersModel registerPlayersModel)
         {
             if (!ModelState.IsValid)

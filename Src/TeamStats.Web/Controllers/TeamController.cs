@@ -23,6 +23,7 @@ namespace TeamStats.Web.Controllers
             _context = context;
         }
 
+        [HttpPost]
         public async Task<IActionResult> Post(RegisterTeamsModel registerTeamsModel)
         {
             if (!ModelState.IsValid)
