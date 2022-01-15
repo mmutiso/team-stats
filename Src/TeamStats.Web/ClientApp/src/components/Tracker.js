@@ -1,76 +1,79 @@
 import React, { Component } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import Checkbox from "@mui/material/Checkbox";
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Paper,
+} from "@mui/material";
 import withStyles from "@mui/styles/withStyles";
-import Paper from "@mui/material/Paper";
 
-const styles = (theme) => ({
+const styles = () => ({
   paper: {
-    // border: "1px solid #E0E0E0",
-    marginBottom: 16,
-    marginTop: 16,
-    height: "70vh",
+    height: "67.5vh",
+    border: "1px solid #E0E0E0",
     overflowY: "auto",
+    "&::-webkit-scrollbar": {
+      width: 7,
+    },
+
+    "&::-webkit-scrollbar-track": {
+      borderRadius: 999,
+      backgroundColor: "#e0e0e0",
+    },
+
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: "#606060",
+      borderRadius: 999,
+    },
+    marginBottom: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
   },
 });
 
-class AttendanceTracker extends Component {
+class Tracker extends Component {
   render() {
     const { classes } = this.props;
 
-    const columns = [
-      { id: "name", name: "Name" },
-      { id: "count", name: "Attendance Count" },
-    ];
-
-    const rows = [
-      { id: "player1", name: "Player 1", count: 10 },
-      { id: "player2", name: "Player 2", count: 13 },
-      { id: "player3", name: "Player 3", count: 24 },
-      { id: "player4", name: "Player 4", count: 7 },
-      { id: "player5", name: "Player 5", count: 15 },
-      { id: "player6", name: "Player 6", count: 5 },
-      { id: "player7", name: "Player 7", count: 9 },
-      { id: "player8", name: "Player 8", count: 30 },
-      { id: "player9", name: "Player 9", count: 25 },
+    const PLAYERS = [
+      { id: 1, name: "Player 1" },
+      { id: 2, name: "Player 2" },
+      { id: 3, name: "Player 3" },
+      { id: 4, name: "Player 4" },
+      { id: 5, name: "Player 5" },
+      { id: 6, name: "Player 6" },
+      { id: 7, name: "Player 7" },
+      { id: 8, name: "Player 8" },
+      { id: 9, name: "Player 9" },
+      { id: 10, name: "Player 10" },
     ];
 
     return (
-      <Paper className={classes.paper}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              <TableCell
-              // align="right"
-              // style={{ minWidth: column.minWidth }}
-              >
-                Player's Name
-              </TableCell>
-              <TableCell
-              // align="right"
-              // style={{ minWidth: column.minWidth }}
-              >
-                Attendance Count
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => {
-              return (
-                <TableRow hover role="checkbox" key={row.id}>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.count}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+      <Paper elevation={0} className={classes.paper}>
+        <List component="nav" dense>
+          {PLAYERS.map((x) => (
+            <ListItem
+              key={x.id}
+              // button
+              secondaryAction={
+                <Checkbox
+                  edge="end"
+                  onChange={() => {}}
+                  // checked={}
+                />
+              }
+            >
+              <ListItemButton>
+                <ListItemText>{x.name}</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
       </Paper>
     );
   }
 }
 
-export default withStyles(styles)(AttendanceTracker);
+export default withStyles(styles)(Tracker);

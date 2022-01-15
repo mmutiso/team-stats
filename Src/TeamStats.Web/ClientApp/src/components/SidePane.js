@@ -1,14 +1,7 @@
 import React, { Component } from "react";
 import Paper from "@mui/material/Paper";
 import withStyles from "@mui/styles/withStyles";
-import {
-  Button,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-} from "@mui/material";
+import { List, ListItemText } from "@mui/material";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import RecordIcon from "@mui/icons-material/Addchart";
@@ -29,12 +22,12 @@ class SidePane extends Component {
         <List>
           <ListItemButton
             selected={selectedIndex === 0}
-            onClick={(e) => handleActiveTab(e, "Team Stats", 0)}
+            onClick={(e) => handleActiveTab(e, "Attendance", 0)}
           >
             <ListItemIcon>
               <StatsIcon />
             </ListItemIcon>
-            <ListItemText primary="Team Stats" />
+            <ListItemText primary="Attendance" />
           </ListItemButton>
           <ListItemButton
             selected={selectedIndex === 1}

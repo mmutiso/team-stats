@@ -35,7 +35,7 @@ class Home extends Component {
             />
           </Grid>
           <Grid item md={10} sm={10}>
-            <Main tabName={tabName} />
+            <Main tabName={tabName} selectedIndex={selectedIndex}/>
           </Grid>
         </Grid>
       </div>

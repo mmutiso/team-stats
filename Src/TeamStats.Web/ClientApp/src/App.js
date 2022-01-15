@@ -1,7 +1,7 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
 import Home from "./components/Home";
-import ManagerRegistration from "./components/ManagerRegistration";
+import ClubRegistration from "./components/ClubRegistration";
 import TeamSetup from "./components/TeamSetup";
 
 export default function App() {
@@ -9,7 +9,7 @@ export default function App() {
     <div style={{}}>
       <Switch>
         <Route path="/register">
-          <ManagerRegistration />
+          <ClubRegistration />
         </Route>
         <Route path="/team-setup">
           <TeamSetup />

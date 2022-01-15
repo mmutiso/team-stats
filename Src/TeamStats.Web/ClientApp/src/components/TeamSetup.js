@@ -94,7 +94,7 @@ class TeamSetup extends React.Component {
               size="small"
               onClick={() => handleNext()}
             >
-              {activeStep === 0 ? "Next" : "Finish"}
+              {activeStep === 0 ? "Next" : "Submit"}
             </Button>
           </div>
         </Paper>

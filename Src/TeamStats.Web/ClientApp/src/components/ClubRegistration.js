@@ -7,6 +7,8 @@ import NextIcon from "@mui/icons-material/ArrowForward";
 import Paper from "@mui/material/Paper";
 import { withRouter } from "react-router";
 
+import { axiosInstance } from "../axiosInstance";
+
 const styles = (theme) => ({
   paper: { width: "40vw", padding: 40 },
   form: { display: "flex", flexDirection: "column" },
@@ -14,15 +16,35 @@ const styles = (theme) => ({
   textField: { width: "100%" },
 });
 
-class ManagerRegistration extends Component {
+class ClubRegistration extends Component {
+  state = { name: "", email: "", phone: "", clubName: "" };
+
   handleSubmit = () => {
     const { history } = this.props;
-    history.push("/team-setup");
+    const { name, email, phone, clubName } = this.state;
+
+    const payload = { name, email, phone, clubName };
+
+    axiosInstance
+      .get("/club", payload)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+
+    // history.push("/team-setup");
+  };
+
+  handleChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+
+    console.log(e.target.value);
   };
 
   render() {
     const { classes } = this.props;
-    const { handleSubmit } = this;
+    const { handleSubmit, handleChange } = this;
+    const { name, email, phone, clubName } = this.state;
 
     return (
       <div
@@ -50,9 +72,12 @@ class ManagerRegistration extends Component {
                 color="primary"
                 size="small"
                 label="Name"
+                name="name"
+                value={name}
                 variant="outlined"
                 type="text"
-                className={classes.textField}
+                fullWidth
+                onChange={(e) => handleChange(e)}
               />
             </div>
             <div className={classes.textFieldContainer}>
@@ -61,8 +86,11 @@ class ManagerRegistration extends Component {
                 size="small"
                 label="Email"
                 variant="outlined"
+                name="email"
+                value={email}
                 type="email"
-                className={classes.textField}
+                fullWidth
+                onChange={(e) => handleChange(e)}
               />
             </div>
             <div className={classes.textFieldContainer}>
@@ -72,7 +100,11 @@ class ManagerRegistration extends Component {
                 label="Phone"
                 variant="outlined"
                 type="phone"
-                className={classes.textField}
+                name="phone"
+                value={phone}
+                fullWidth
+                onChange={(e) => handleChange(e)}
+                placeholder="eg. 0712345678"
               />
             </div>
             <div className={classes.textFieldContainer}>
@@ -81,8 +113,11 @@ class ManagerRegistration extends Component {
                 id="outlined-basic"
                 label="Club Name"
                 variant="outlined"
+                name="clubName"
+                value={clubName}
                 type="text"
-                className={classes.textField}
+                fullWidth
+                onChange={(e) => handleChange(e)}
               />
             </div>
           </form>
@@ -98,6 +133,12 @@ class ManagerRegistration extends Component {
               size="small"
               endIcon={<NextIcon />}
               onClick={() => handleSubmit()}
+              disabled={
+                name === "" ||
+                email === "" ||
+                phone.length !== 10 ||
+                clubName === ""
+              }
             >
               Submit
             </Button>
@@ -108,4 +149,4 @@ class ManagerRegistration extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(ManagerRegistration));
+export default withRouter(withStyles(styles)(ClubRegistration));

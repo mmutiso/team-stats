@@ -12,6 +12,7 @@ import TextField from "@mui/material/TextField";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import Tracker from "./Tracker";
+import Stats from "./Stats";
 
 const styles = (theme) => ({
   paper: {
@@ -20,6 +21,7 @@ const styles = (theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     border: "1px solid #E0E0E0",
+    marginBottom: 16,
   },
 });
 
@@ -33,7 +35,7 @@ class Main extends Component {
     this.setState({ date: value });
   };
   render() {
-    const { classes, tabName } = this.props;
+    const { classes, tabName, selectedIndex } = this.props;
     const { handleTeamChange, handleDateChange } = this;
     const { teamName, date } = this.state;
 
@@ -85,7 +87,7 @@ class Main extends Component {
         <Paper elevation={0} className={classes.paper}>
           {HorizontalBar}
         </Paper>
-        <Tracker />
+        {selectedIndex === 0 ? <Stats /> : <Tracker />}
       </>
     );
   }
