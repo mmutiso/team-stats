@@ -1,22 +1,23 @@
-import React, { Component } from 'react';
-import { Route } from 'react-router';
-import { Layout } from './components/Layout';
-import { Home } from './components/Home';
-import { FetchData } from './components/FetchData';
-import { Counter } from './components/Counter';
+import React from "react";
+import { Switch, Route } from "react-router-dom";
+import Home from "./components/Home";
+import ManagerRegistration from "./components/ManagerRegistration";
+import TeamSetup from "./components/TeamSetup";
 
-import './custom.css'
-
-export default class App extends Component {
-  static displayName = App.name;
-
-  render () {
-    return (
-      <Layout>
-        <Route exact path='/' component={Home} />
-        <Route path='/counter' component={Counter} />
-        <Route path='/fetch-data' component={FetchData} />
-      </Layout>
-    );
-  }
+export default function App() {
+  return (
+    <div style={{}}>
+      <Switch>
+        <Route path="/register">
+          <ManagerRegistration />
+        </Route>
+        <Route path="/team-setup">
+          <TeamSetup />
+        </Route>
+        <Route path="/">
+          <Home />
+        </Route>
+      </Switch>
+    </div>
+  );
 }
