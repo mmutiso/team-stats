@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using TeamStats.Web.Models;
+using TeamStats.Web.Services;
 
 namespace TeamStats.Web
 {
@@ -33,8 +35,21 @@ namespace TeamStats.Web
 
             services.AddControllersWithViews();
 
+            services.AddAuthorization();
+
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "https://localhost:5000";
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
+                });
+
             services.AddDbContext<TeamStatsContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("TeamStatsContext")));
+            services.AddScoped<IdentityService>();
 
             services.AddSwaggerGen();
             // In production, the React files will be served from this directory
@@ -64,7 +79,9 @@ namespace TeamStats.Web
 
             app.UseRouting();
             app.UseCors(_reactAppCors);
-
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
