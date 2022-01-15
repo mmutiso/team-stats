@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using TeamStats.Web.Models;
 
 namespace TeamStats.Web
@@ -23,6 +24,18 @@ namespace TeamStats.Web
         {
 
             services.AddControllersWithViews();
+
+            services.AddAuthorization();
+
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "https://localhost:5000";
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
+                });
 
             services.AddDbContext<TeamStatsContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("TeamStatsContext")));
@@ -53,8 +66,12 @@ namespace TeamStats.Web
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            app.UseRouting();
+            
+            
 
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
