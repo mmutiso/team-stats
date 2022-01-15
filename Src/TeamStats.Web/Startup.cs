@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using TeamStats.Web.Models;
+using TeamStats.Web.Services;
 
 namespace TeamStats.Web
 {
@@ -39,6 +40,7 @@ namespace TeamStats.Web
 
             services.AddDbContext<TeamStatsContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("TeamStatsContext")));
+            services.AddScoped<IdentityService>();
 
             services.AddSwaggerGen();
             // In production, the React files will be served from this directory
