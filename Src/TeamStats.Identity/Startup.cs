@@ -18,7 +18,7 @@ namespace TeamStats.Identity
         {
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
-                .AddInMemoryApiResources(Config.GetApiResources())
+                .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryClients(Config.GetClients());
         }
 

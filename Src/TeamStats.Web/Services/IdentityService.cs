@@ -22,7 +22,7 @@ namespace TeamStats.Web.Services
                 Address = disco.TokenEndpoint,
                 ClientId = "client",
                 ClientSecret = "secret",
-                //Scope = "api1"
+                Scope = "api1"
             });
 
             if (tokenResponse.IsError)

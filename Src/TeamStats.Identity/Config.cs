@@ -7,14 +7,12 @@ using System.Threading.Tasks;
 namespace TeamStats.Identity
 {
     public class Config
-    {
-        public static IEnumerable<ApiResource> GetApiResources()
-        {
-            return new List<ApiResource>
+    {       
+        public static IEnumerable<ApiScope> ApiScopes =>
+            new List<ApiScope>
             {
-                new ApiResource("api1", "My API")
+                new ApiScope("api1", "My API")
             };
-        }
 
         public static IEnumerable<Client> GetClients()
         {
