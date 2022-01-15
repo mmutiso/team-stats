@@ -17,13 +17,15 @@ namespace TeamStats.Web.Services
             if (disco.IsError)
                 throw new Exception(disco.Error);
 
-            var tokenResponse = await httpClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+            var tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
                 Address = disco.TokenEndpoint,
-                ClientId = "client",
+                ClientId = "api1",
                 ClientSecret = "secret",
-                Scope = "api1"
-            });
+                UserName = "bob",
+                Password = "Pass123$",
+                Scope = "profile"
+            }) ;
 
             if (tokenResponse.IsError)
                 throw new Exception(tokenResponse.Error);
