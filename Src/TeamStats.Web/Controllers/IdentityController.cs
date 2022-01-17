@@ -21,6 +21,7 @@ namespace TeamStats.Web.Controllers
         }
 
         [Route("identity")]
+        [Authorize]
         public IActionResult Get()
         {
             return new JsonResult(from c in User.Claims select new { c.Type, c.Value });

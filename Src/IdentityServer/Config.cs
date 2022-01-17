@@ -22,10 +22,7 @@ namespace IdentityServer
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope("read", "Read data"),
-                new ApiScope("write", "Write data"),
-                new ApiScope("trade", "Trade on the platform"),
-                new ApiScope("admin", "Perform administrative tasks"),
+                new ApiScope("team-stats-id", "Team Stats Id"),
             };
 
         //public static IEnumerable<Client> Clients =>

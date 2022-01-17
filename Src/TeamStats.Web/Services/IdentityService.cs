@@ -22,10 +22,10 @@ namespace TeamStats.Web.Services
                 Address = disco.TokenEndpoint,
                 ClientId = "api1",
                 ClientSecret = "secret",
-                UserName = "bob",
+                UserName = "alice",
                 Password = "Pass123$",
-                Scope = "profile"
-            }) ;
+                Scope = "openid profile"
+            });
 
             if (tokenResponse.IsError)
                 throw new Exception(tokenResponse.Error);

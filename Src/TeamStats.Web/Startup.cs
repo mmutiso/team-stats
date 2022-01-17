@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using TeamStats.Web.Models;
 using TeamStats.Web.Services;
 
@@ -24,6 +25,8 @@ namespace TeamStats.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             services.AddCors(options =>
             {
                 options.AddPolicy(name: _reactAppCors,
@@ -40,11 +43,14 @@ namespace TeamStats.Web
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = "https://localhost:5000";
+                    options.Authority = "http://localhost:5000";
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                       NameClaimType = "given_name"
                     };
+
+                    options.RequireHttpsMetadata = false;
                 });
 
             services.AddDbContext<TeamStatsContext>(options =>
