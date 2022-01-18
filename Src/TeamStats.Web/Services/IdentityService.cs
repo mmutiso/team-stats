@@ -20,7 +20,7 @@ namespace TeamStats.Web.Services
             var tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
                 Address = disco.TokenEndpoint,
-                ClientId = "api1",
+                ClientId = "team-stats-web-api",
                 ClientSecret = "secret",
                 UserName = "alice",
                 Password = "Pass123$",

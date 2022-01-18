@@ -64,7 +64,8 @@ namespace IdentityServer
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 //.AddClientStore<DefaultClientStore>()
                 .AddInMemoryClients(clients)
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddProfileService<CustomProfileService>();
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();

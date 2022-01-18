@@ -47,9 +47,10 @@ namespace TeamStats.Web
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false,
-                       NameClaimType = "given_name"
+                        NameClaimType = "given_name"
                     };
 
+                    
                     options.RequireHttpsMetadata = false;
                 });
 
