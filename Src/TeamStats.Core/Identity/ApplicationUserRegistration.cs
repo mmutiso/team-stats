@@ -13,10 +13,10 @@ namespace TeamStats.Core.Identity
         public string PhoneNumber { get; set; }
         public string Name { get; set; }
         public string Token { get; set; }
-        public DateTime DateCreateUtc { get; set; }
+        public DateTime DateCreatedUtc { get; set; }
         public string ConfirmationToken { get; set; }
         public bool Confirmed { get; set; }
-        public DateTime? DateConfirmed { get; set; }
+        public DateTime? DateConfirmedUtc { get; set; }
         
 
         public ApplicationUserRegistration()
@@ -29,7 +29,7 @@ namespace TeamStats.Core.Identity
             this.Name = name;
             this.Email = email;
             this.Id = Guid.NewGuid();
-            this.DateCreateUtc = DateTime.UtcNow;
+            this.DateCreatedUtc = DateTime.UtcNow;
             this.Token = Guid.NewGuid().ToString().Replace("-", "");
         }
 
@@ -40,7 +40,7 @@ namespace TeamStats.Core.Identity
 
         public void Confirm()
         {
-            this.DateConfirmed = DateTime.UtcNow;
+            this.DateConfirmedUtc = DateTime.UtcNow;
             this.Confirmed = true;
         }
     }

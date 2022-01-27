@@ -50,7 +50,7 @@ namespace TeamStats.Web.Controllers
 
             var registration = _applicationDbContext.ApplicationUserRegistrations
                                 .Where(x => x.Email == confirmUserModel.Email)
-                                .OrderByDescending(x => x.DateCreateUtc)
+                                .OrderByDescending(x => x.DateCreatedUtc)
                                 .FirstOrDefault();
 
             if (registration == null)
@@ -58,6 +58,9 @@ namespace TeamStats.Web.Controllers
 
             if (!string.Equals(registration.Token, confirmUserModel.Token, StringComparison.OrdinalIgnoreCase))
                 return BadRequest(confirmUserModel);
+
+            registration.Confirm();
+            await _applicationDbContext.SaveChangesAsync();
 
             var user = await _identityService.CreateUserAsync(registration);
 

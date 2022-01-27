@@ -35,7 +35,8 @@ namespace IdentityServer
             services.AddControllersWithViews();
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), assembly =>
+            assembly.MigrationsAssembly("IdentityServer")));
 
             services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
                 
