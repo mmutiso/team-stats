@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
+using TeamStats.Core.Identity;
 using TeamStats.Web.Models;
 using TeamStats.Web.Services;
 
@@ -57,6 +60,13 @@ namespace TeamStats.Web
             services.AddDbContext<TeamStatsContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("TeamStatsContext")));
             services.AddScoped<IdentityService>();
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddSwaggerGen();
             // In production, the React files will be served from this directory

@@ -9,6 +9,11 @@ namespace TeamStats.Web.Services
 {
     public class IdentityService
     {
+
+        public IdentityService()
+        {
+
+        }
         public async Task<object> RequestTokenAsync()
         {
             HttpClient httpClient = new HttpClient();

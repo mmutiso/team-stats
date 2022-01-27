@@ -3,7 +3,6 @@
 
 
 using IdentityServer4;
-using IdentityServer.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +15,7 @@ using IdentityServer4.Models;
 using IdentityServer4.Stores;
 using IdentityServer4.Services;
 using System;
+using TeamStats.Core.Identity;
 
 namespace IdentityServer
 {

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TeamStats.Core.Identity;
+using TeamStats.Web.ApiModels;
 using TeamStats.Web.Services;
 
 namespace TeamStats.Web.Controllers
@@ -12,12 +15,12 @@ namespace TeamStats.Web.Controllers
     public class IdentityController : Controller
     {
         private readonly ILogger<IdentityController> _logger;
-        private readonly IdentityService _identityService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public IdentityController(ILogger<IdentityController> logger, IdentityService identityService)
+        public IdentityController(ILogger<IdentityController> logger, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
-            _identityService = identityService;
+            _userManager = userManager;
         }
 
         [Route("identity")]
@@ -27,5 +30,10 @@ namespace TeamStats.Web.Controllers
             return new JsonResult(from c in User.Claims select new { c.Type, c.Value });
         }
 
+
+        public async Task<IActionResult> Post(CreateUserModel model)
+        {
+            var user = 
+        }
     }
 }
