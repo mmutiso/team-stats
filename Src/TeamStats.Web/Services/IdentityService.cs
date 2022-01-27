@@ -1,23 +1,57 @@
-﻿using IdentityModel.Client;
+﻿using IdentityModel;
+using IdentityModel.Client;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using TeamStats.Core.Identity;
 
 namespace TeamStats.Web.Services
 {
     public class IdentityService
     {
-
-        public IdentityService()
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IdentityConfigurationOptions _configurationOptions;
+        public IdentityService(UserManager<ApplicationUser> userManager, IdentityConfigurationOptions configurationOptions)
         {
-
+            _userManager = userManager;
+            _configurationOptions = configurationOptions;
         }
-        public async Task<object> RequestTokenAsync()
+
+
+        public async Task<ApplicationUser> CreateUserAsync(ApplicationUserRegistration identityUserModel)
+        {
+            var user = await _userManager.FindByEmailAsync(identityUserModel.Email);
+            if (user != null)
+                return user;
+
+            user = new ApplicationUser
+            {
+                Id = Guid.NewGuid(),
+                UserName = identityUserModel.Email,
+                Email = identityUserModel.Email,
+                PhoneNumber = identityUserModel.PhoneNumber
+            };
+            var result = await _userManager.CreateAsync(user, _configurationOptions.DefaultPassword);
+            if (!result.Succeeded)
+                throw new Exception(result.Errors.First().Description);
+
+            result = await _userManager.AddClaimsAsync(user, new System.Security.Claims.Claim[]
+                {
+                      new System.Security.Claims.Claim(JwtClaimTypes.GivenName, identityUserModel.GetGivenName()),
+                });
+            if(!result.Succeeded)
+                throw new Exception(result.Errors.First().Description);
+
+            return user;
+        }
+
+        public async Task<object> RequestTokenAsync(string username)
         {
             HttpClient httpClient = new HttpClient();
-            var disco = await httpClient.GetDiscoveryDocumentAsync("http://localhost:5000");
+            var disco = await httpClient.GetDiscoveryDocumentAsync(_configurationOptions.Authority);
 
             if (disco.IsError)
                 throw new Exception(disco.Error);
@@ -27,8 +61,8 @@ namespace TeamStats.Web.Services
                 Address = disco.TokenEndpoint,
                 ClientId = "team-stats-web-api",
                 ClientSecret = "secret",
-                UserName = "alice",
-                Password = "Pass123$",
+                UserName =username,
+                Password = _configurationOptions.DefaultPassword,
                 Scope = "openid profile"
             });
 

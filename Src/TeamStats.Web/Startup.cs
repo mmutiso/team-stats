@@ -46,7 +46,7 @@ namespace TeamStats.Web
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = "http://localhost:5000";
+                    options.Authority = Configuration["IdentityConfiguration:Authority"];
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false,
@@ -56,6 +56,8 @@ namespace TeamStats.Web
                     
                     options.RequireHttpsMetadata = false;
                 });
+
+            services.Configure<IdentityConfigurationOptions>(Configuration.GetSection("IdentityConfiguration"));
 
             services.AddDbContext<TeamStatsContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("TeamStatsContext")));

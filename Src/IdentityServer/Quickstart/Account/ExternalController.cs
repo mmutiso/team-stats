@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel;
-using IdentityServer.Data;
+using TeamStats.Core.Identity;
 using IdentityServer4;
 using IdentityServer4.Events;
 using IdentityServer4.Services;

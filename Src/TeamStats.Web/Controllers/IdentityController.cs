@@ -31,9 +31,6 @@ namespace TeamStats.Web.Controllers
         }
 
 
-        public async Task<IActionResult> Post(CreateUserModel model)
-        {
-            var user = 
-        }
+      
     }
 }

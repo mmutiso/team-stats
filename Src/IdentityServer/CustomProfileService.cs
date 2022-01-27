@@ -1,4 +1,4 @@
-﻿using IdentityServer.Data;
+﻿
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using TeamStats.Core.Identity;
 
 namespace IdentityServer
 {

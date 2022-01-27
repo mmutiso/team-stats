@@ -3,7 +3,7 @@
 
 
 using IdentityModel;
-using IdentityServer.Data;
+using TeamStats.Core.Identity;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
