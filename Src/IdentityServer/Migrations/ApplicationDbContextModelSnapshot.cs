@@ -295,14 +295,10 @@ namespace IdentityServer.Migrations
                         .HasColumnType("text")
                         .HasColumnName("phone_number");
 
-                    b.Property<string>("Token")
-                        .HasColumnType("text")
-                        .HasColumnName("token");
-
                     b.HasKey("Id")
-                        .HasName("pk_application_user_registration");
+                        .HasName("pk_application_user_registrations");
 
-                    b.ToTable("application_user_registration");
+                    b.ToTable("application_user_registrations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

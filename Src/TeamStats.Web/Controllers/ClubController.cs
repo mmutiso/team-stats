@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using TeamStats.Web.ApiModels;
 using Microsoft.AspNetCore.Http;
 using TeamStats.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TeamStats.Web.Controllers
 {
@@ -27,6 +28,7 @@ namespace TeamStats.Web.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize]
         public IActionResult Register(NewRegistrationModel newRegistrationModel)
         {
             if (!ModelState.IsValid)

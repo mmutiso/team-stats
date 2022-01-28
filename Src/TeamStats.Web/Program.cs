@@ -21,6 +21,12 @@ namespace TeamStats.Web
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                }).ConfigureLogging((context, builder) =>
+                {
+                    builder.SetMinimumLevel(LogLevel.Trace);
+                    builder.AddConsole();
+                    
+
                 });
     }
 }

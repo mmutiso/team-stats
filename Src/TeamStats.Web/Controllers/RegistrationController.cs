@@ -12,6 +12,8 @@ using TeamStats.Web.Services;
 
 namespace TeamStats.Web.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class RegistrationController : Controller
     {
         private readonly ILogger<RegistrationController> _logger;
@@ -56,7 +58,7 @@ namespace TeamStats.Web.Controllers
             if (registration == null)
                 return NotFound(confirmUserModel);
 
-            if (!string.Equals(registration.Token, confirmUserModel.Token, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(registration.ConfirmationToken, confirmUserModel.Token, StringComparison.OrdinalIgnoreCase))
                 return BadRequest(confirmUserModel);
 
             registration.Confirm();

@@ -12,19 +12,12 @@ using TeamStats.Web.Services;
 
 namespace TeamStats.Web.Controllers
 {
-    public class IdentityController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class TestController : Controller
     {
-        private readonly ILogger<IdentityController> _logger;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public IdentityController(ILogger<IdentityController> logger, UserManager<ApplicationUser> userManager)
-        {
-            _logger = logger;
-            _userManager = userManager;
-        }
-
-        [Route("identity")]
         [Authorize]
+        [HttpGet]
         public IActionResult Get()
         {
             return new JsonResult(from c in User.Claims select new { c.Type, c.Value });

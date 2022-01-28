@@ -28,6 +28,7 @@ namespace TeamStats.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+           
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddCors(options =>
@@ -43,10 +44,11 @@ namespace TeamStats.Web
 
             services.AddAuthorization();
 
+            string identityServerEndpoint = Configuration["IdentityConfiguration:Authority"];
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = Configuration["IdentityConfiguration:Authority"];
+                    options.Authority = "http://localhost:5000";
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false,
@@ -60,7 +62,10 @@ namespace TeamStats.Web
             services.Configure<IdentityConfigurationOptions>(Configuration.GetSection("IdentityConfiguration"));
 
             services.AddDbContext<TeamStatsContext>(options =>
-            options.UseNpgsql(Configuration.GetConnectionString("TeamStatsContext")));
+            {
+                options.UseNpgsql(Configuration.GetConnectionString("TeamStatsContext"));
+                options.UseSnakeCaseNamingConvention();
+            });
             services.AddScoped<IdentityService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -81,24 +86,25 @@ namespace TeamStats.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    //app.UseDeveloperExceptionPage();
 
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            //}
+            //else
+            //{
+            //    app.UseExceptionHandler("/Error");
+            //}
+            app.UseExceptionHandler("/error");
+
+            //app.UseStaticFiles();
+            //app.UseSpaStaticFiles();
 
             app.UseSwagger();
             app.UseSwaggerUI();
 
             app.UseRouting();
             app.UseCors(_reactAppCors);
-            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
@@ -108,15 +114,15 @@ namespace TeamStats.Web
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
+            //app.UseSpa(spa =>
+            ////{
+            //    spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
-            });
+            //    if (env.IsDevelopment())
+            //    {
+            //        spa.UseReactDevelopmentServer(npmScript: "start");
+            //    }
+            //});
         }
     }
 }

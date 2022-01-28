@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using TeamStats.Core.Identity;
+using Microsoft.Extensions.Options;
 
 namespace TeamStats.Web.Services
 {
@@ -14,10 +15,10 @@ namespace TeamStats.Web.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IdentityConfigurationOptions _configurationOptions;
-        public IdentityService(UserManager<ApplicationUser> userManager, IdentityConfigurationOptions configurationOptions)
+        public IdentityService(UserManager<ApplicationUser> userManager, IOptions<IdentityConfigurationOptions> configurationOptions)
         {
             _userManager = userManager;
-            _configurationOptions = configurationOptions;
+            _configurationOptions = configurationOptions.Value;
         }
 
 
@@ -32,8 +33,10 @@ namespace TeamStats.Web.Services
                 Id = Guid.NewGuid(),
                 UserName = identityUserModel.Email,
                 Email = identityUserModel.Email,
-                PhoneNumber = identityUserModel.PhoneNumber
+                PhoneNumber = identityUserModel.PhoneNumber,
+                EmailConfirmed = true
             };
+            
             var result = await _userManager.CreateAsync(user, _configurationOptions.DefaultPassword);
             if (!result.Succeeded)
                 throw new Exception(result.Errors.First().Description);

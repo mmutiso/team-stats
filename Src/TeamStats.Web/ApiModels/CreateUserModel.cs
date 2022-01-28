@@ -15,9 +15,13 @@ namespace TeamStats.Web.ApiModels
         [Required]
         public string Name { get; set; }
 
+        [Required]
+        [StringLength(10, MinimumLength =10)]
+        public string PhoneNumber { get; set; }
+
         public ApplicationUserRegistration CreateRegistration()
         {
-            var registration = new ApplicationUserRegistration(Name, Email);
+            var registration = new ApplicationUserRegistration(Name, Email, PhoneNumber);
 
             return registration;
         }

@@ -9,6 +9,24 @@ namespace IdentityServer.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "application_user_registrations",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    email = table.Column<string>(type: "text", nullable: true),
+                    phone_number = table.Column<string>(type: "text", nullable: true),
+                    name = table.Column<string>(type: "text", nullable: true),
+                    date_created_utc = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    confirmation_token = table.Column<string>(type: "text", nullable: true),
+                    confirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    date_confirmed_utc = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_application_user_registrations", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -193,6 +211,9 @@ namespace IdentityServer.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "application_user_registrations");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
