@@ -52,6 +52,7 @@ namespace TeamStats.Web.Services
             if (disco.IsError)
                 throw new Exception(disco.Error);
 
+
             var tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
                 Address = disco.TokenEndpoint,

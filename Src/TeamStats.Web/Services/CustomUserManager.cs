@@ -6,15 +6,18 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TeamStats.Core.Identity;
+using System.Web.Helpers;
 
 namespace TeamStats.Web.Services
 {
     public class CustomUserManager : IUserManager
     {
         ApplicationDbContext _dbContext;
-        public CustomUserManager(ApplicationDbContext dbContext)
+        IPasswordHasher<ApplicationUser> _passwordHasher;
+        public CustomUserManager(ApplicationDbContext dbContext, IPasswordHasher<ApplicationUser> passwordHasher)
         {
             _dbContext = dbContext;
+            _passwordHasher = passwordHasher;
         }    
         public async Task AddClaimsAsync(ApplicationUser user, string givenName)
         {
@@ -30,13 +33,16 @@ namespace TeamStats.Web.Services
 
         public async Task CreateAsync(ApplicationUser user, string password)
         {
+            // https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Extensions.Core/src/PasswordHasher.cs
+            string passwordHash = _passwordHasher.HashPassword(user, password);
+            user.PasswordHash = passwordHash;
             _dbContext.Add(user);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task<ApplicationUser> FindByEmailAsync(string email)
         {
-            var user = _dbContext.Users.Where(x => string.Equals(x.Email, email, StringComparison.OrdinalIgnoreCase))
+            var user = _dbContext.Users.Where(x => x.Email.ToLower() == email.ToLower())
                             .FirstOrDefault();
 
             await Task.CompletedTask;

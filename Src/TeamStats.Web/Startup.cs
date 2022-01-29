@@ -73,6 +73,12 @@ namespace TeamStats.Web
 
             services.AddScoped<IUserManager, CustomUserManager>();
 
+            services.Configure<PasswordHasherOptions>(options =>
+            {
+                options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV3;
+            });
+
+            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
             services.AddSwaggerGen();
             // In production, the React files will be served from this directory
             //services.AddSpaStaticFiles(configuration =>
