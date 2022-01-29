@@ -8,5 +8,5 @@ export default combineReducers({
   clubs: clubReducer,
   users: userReducer,
   teams: teamReducer,
-  player: playerReducer,
+  players: playerReducer,
 });

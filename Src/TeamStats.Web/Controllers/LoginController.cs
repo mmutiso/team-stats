@@ -8,6 +8,7 @@ using TeamStats.Web.Services;
 
 namespace TeamStats.Web.Controllers
 {
+    [ApiController]
     public class LoginController : Controller
     {
         private readonly ILogger<LoginController> _logger;

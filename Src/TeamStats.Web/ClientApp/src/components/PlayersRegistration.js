@@ -15,6 +15,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import CloseIcon from "@mui/icons-material/Close";
+import { connect } from "react-redux";
+import { getTeams } from "../store/actions/teamActions";
+import { registerPlayers } from "../store/actions/playerActions";
 
 const styles = () => ({
   //   textField: { marginBottom: 8 },
@@ -42,12 +45,22 @@ const styles = () => ({
 export class PlayersRegistration extends Component {
   state = { teamName: "senior" };
 
-
+  componentDidMount = async () => {
+    await this.props.getTeams();
+  };
 
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      teamData,
+      handlePlayerAddition,
+      handleChange,
+      player,
+      players,
+      handleTeamChange,
+      selectedTeam,
+    } = this.props;
     const { teamName } = this.state;
-    const { handleTeamChange } = this;
 
     return (
       <div>
@@ -65,19 +78,23 @@ export class PlayersRegistration extends Component {
               <Select
                 labelId="team-select-label"
                 id="team-select"
-                value={teamName}
+                value={selectedTeam}
                 label="Select team"
                 onChange={(e) => handleTeamChange(e.target.value)}
               >
-                <MenuItem value="senior">Senior</MenuItem>
-                <MenuItem value="u21">U21</MenuItem>
-                <MenuItem value="u10">U10</MenuItem>
+                {teamData.map((x) => (
+                  <MenuItem key={x.id} value={x.name}>
+                    {x.name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </div>
           <TextField
             size="small"
             label="Player Name"
+            value={player}
+            onChange={(e) => handleChange(e)}
             variant="outlined"
             style={{ width: "60%" }}
             className={classes.textField}
@@ -85,76 +102,37 @@ export class PlayersRegistration extends Component {
           <Button
             startIcon={<AddIcon size="small" />}
             style={{ flexGrow: 1, marginLeft: 8 }}
+            onClick={() => handlePlayerAddition()}
           >
             Add
           </Button>
         </div>
         <List>
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
-
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
+          {players.map((x, i) => (
+            <ListItem
+              key={i}
+              button
+              secondaryAction={
+                <IconButton size="small">
+                  <CloseIcon style={{ fontSize: 18 }} />
+                </IconButton>
+              }
+            >
+              <ListItemText>{x}</ListItemText>
+            </ListItem>
+          ))}
         </List>
       </div>
     );
   }
 }
 
-export default withStyles(styles)(PlayersRegistration);
+const mapStateToProps = (state) => {
+  return {
+    teamData: state.teams.teamData,
+  };
+};
+
+export default withStyles(styles)(
+  connect(mapStateToProps, { getTeams, registerPlayers })(PlayersRegistration)
+);

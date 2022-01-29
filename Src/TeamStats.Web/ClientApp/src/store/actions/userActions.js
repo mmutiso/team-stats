@@ -6,10 +6,10 @@ import {
 
 import { axiosInstance } from "../../axiosInstance";
 
-export const registerClub = (payload) => async (dispatch) => {
+export const registerUser = (payload) => async (dispatch) => {
   dispatch({ type: REQUEST_REGISTER_USER });
   try {
-    const res = await axiosInstance.post("/clubs", payload);
+    const res = await axiosInstance.post("/registration", payload);
 
     if (res.status === 200) {
       dispatch({ type: REGISTER_USER_SUCCESSFUL, payload: res.data });

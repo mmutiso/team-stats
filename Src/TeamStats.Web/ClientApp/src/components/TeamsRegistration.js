@@ -28,7 +28,8 @@ const styles = (theme) => ({
 
 class TeamsRegistration extends Component {
   render() {
-    const { classes } = this.props;
+    const { classes, handleTeamAddition, handleChange, team, teams } =
+      this.props;
 
     return (
       <div className={classes.container}>
@@ -40,79 +41,35 @@ class TeamsRegistration extends Component {
             size="small"
             label="Team Name"
             variant="outlined"
+            name="team"
+            value={team}
             placeholder="eg. Senior, U21, U16"
             style={{ width: "80%" }}
+            onChange={(e) => handleChange(e)}
           />
           <Button
             startIcon={<AddIcon size="small" />}
             style={{ flexGrow: 1, marginLeft: 8 }}
+            onClick={() => handleTeamAddition()}
           >
             Add
           </Button>
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}></div>
         <List>
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
-
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
-          <ListItem
-            button
-            secondaryAction={
-              <IconButton size="small">
-                <CloseIcon style={{ fontSize: 18 }} />
-              </IconButton>
-            }
-          >
-            <ListItemText>Team 1</ListItemText>
-          </ListItem>
+          {teams.map((x, i) => (
+            <ListItem
+              key={i}
+              button
+              secondaryAction={
+                <IconButton size="small">
+                  <CloseIcon style={{ fontSize: 18 }} />
+                </IconButton>
+              }
+            >
+              <ListItemText>{x}</ListItemText>
+            </ListItem>
+          ))}
         </List>
       </div>
     );

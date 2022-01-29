@@ -6,7 +6,7 @@ import {
 
 import { axiosInstance } from "../../axiosInstance";
 
-export const registerClub = (payload) => async (dispatch) => {
+export const registerPlayers = (payload) => async (dispatch) => {
   dispatch({ type: REQUEST_REGISTER_PLAYER });
   try {
     const res = await axiosInstance.post("/players", payload);

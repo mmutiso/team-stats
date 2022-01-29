@@ -8,10 +8,12 @@ namespace TeamStats.Web.Controllers
 {
 
     [ApiController]
+    
     public class ErrorController : Controller
     {
 
         [Route("/error")]
+        [HttpGet]
         public IActionResult Error()
         {
             return Problem();
