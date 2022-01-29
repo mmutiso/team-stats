@@ -1,11 +1,17 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using TeamStats.Core.Identity;
 using TeamStats.Web.Models;
+using TeamStats.Web.Services;
 
 namespace TeamStats.Web
 {
@@ -22,6 +28,9 @@ namespace TeamStats.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+           
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             services.AddCors(options =>
             {
                 options.AddPolicy(name: _reactAppCors,
@@ -33,8 +42,38 @@ namespace TeamStats.Web
 
             services.AddControllersWithViews();
 
+            services.AddAuthorization();
+
+            string identityServerEndpoint = Configuration["IdentityConfiguration:Authority"];
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "http://localhost:5000";
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false,
+                        NameClaimType = "given_name"
+                    };
+
+                    
+                    options.RequireHttpsMetadata = false;
+                });
+
+            services.Configure<IdentityConfigurationOptions>(Configuration.GetSection("IdentityConfiguration"));
+
             services.AddDbContext<TeamStatsContext>(options =>
-            options.UseNpgsql(Configuration.GetConnectionString("TeamStatsContext")));
+            {
+                options.UseNpgsql(Configuration.GetConnectionString("TeamStatsContext"));
+                options.UseSnakeCaseNamingConvention();
+            });
+            services.AddScoped<IdentityService>();
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddSwaggerGen();
             // In production, the React files will be served from this directory
@@ -47,24 +86,27 @@ namespace TeamStats.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    //app.UseDeveloperExceptionPage();
 
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            //}
+            //else
+            //{
+            //    app.UseExceptionHandler("/Error");
+            //}
+            app.UseExceptionHandler("/error");
+
+            //app.UseStaticFiles();
+            //app.UseSpaStaticFiles();
 
             app.UseSwagger();
             app.UseSwaggerUI();
 
             app.UseRouting();
             app.UseCors(_reactAppCors);
-
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -72,15 +114,15 @@ namespace TeamStats.Web
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
-            // app.UseSpa(spa =>
-            // {
-            //     spa.Options.SourcePath = "ClientApp";
+            //app.UseSpa(spa =>
+            ////{
+            //    spa.Options.SourcePath = "ClientApp";
 
-            //     if (env.IsDevelopment())
-            //     {
-            //         spa.UseReactDevelopmentServer(npmScript: "start");
-            //     }
-            // });
+            //    if (env.IsDevelopment())
+            //    {
+            //        spa.UseReactDevelopmentServer(npmScript: "start");
+            //    }
+            //});
         }
     }
 }
