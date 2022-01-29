@@ -27,7 +27,7 @@ namespace TeamStats.Web
                 options.AddPolicy(name: _reactAppCors,
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:3000");
+                        builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
                     });
             });
 

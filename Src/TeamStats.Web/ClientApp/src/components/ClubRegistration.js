@@ -5,8 +5,10 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import NextIcon from "@mui/icons-material/ArrowForward";
 import Paper from "@mui/material/Paper";
+import CircularProgress from "@mui/material/CircularProgress";
 import { withRouter } from "react-router";
 
+import { connect } from "react-redux";
 import { axiosInstance } from "../axiosInstance";
 
 const styles = (theme) => ({
@@ -17,34 +19,27 @@ const styles = (theme) => ({
 });
 
 class ClubRegistration extends Component {
-  state = { name: "", email: "", phone: "", clubName: "" };
+  state = { managerName: "", email: "", phoneNumber: "", clubName: "" };
 
-  handleSubmit = () => {
-    const { history } = this.props;
-    const { name, email, phone, clubName } = this.state;
+  handleSubmit = async () => {
+    const { history, registerClub, data } = this.props;
+    const { managerName, email, phoneNumber, clubName } = this.state;
 
-    const payload = { name, email, phone, clubName };
+    const payload = { managerName, email, phoneNumber, clubName };
 
-    axiosInstance
-      .get("/club", payload)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
+    console.log(data);
 
     // history.push("/team-setup");
   };
 
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
-
-    console.log(e.target.value);
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, status, error } = this.props;
     const { handleSubmit, handleChange } = this;
-    const { name, email, phone, clubName } = this.state;
+    const { managerName, email, phoneNumber, clubName } = this.state;
 
     return (
       <div
@@ -72,8 +67,8 @@ class ClubRegistration extends Component {
                 color="primary"
                 size="small"
                 label="Name"
-                name="name"
-                value={name}
+                name="managerName"
+                value={managerName}
                 variant="outlined"
                 type="text"
                 fullWidth
@@ -100,8 +95,8 @@ class ClubRegistration extends Component {
                 label="Phone"
                 variant="outlined"
                 type="phone"
-                name="phone"
-                value={phone}
+                name="phoneNumber"
+                value={phoneNumber}
                 fullWidth
                 onChange={(e) => handleChange(e)}
                 placeholder="eg. 0712345678"
@@ -131,12 +126,18 @@ class ClubRegistration extends Component {
             <Button
               variant="contained"
               size="small"
-              endIcon={<NextIcon />}
+              endIcon={
+                status === "loading" ? (
+                  <CircularProgress size={16} style={{ color: "#fff" }} />
+                ) : (
+                  <NextIcon />
+                )
+              }
               onClick={() => handleSubmit()}
               disabled={
-                name === "" ||
+                managerName === "" ||
                 email === "" ||
-                phone.length !== 10 ||
+                phoneNumber.length !== 10 ||
                 clubName === ""
               }
             >
@@ -149,4 +150,11 @@ class ClubRegistration extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(ClubRegistration));
+const mapStateToProps = (state) => {};
+
+const mapDispatchToProps = (dispatch) => {};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(withStyles(styles)(ClubRegistration)));

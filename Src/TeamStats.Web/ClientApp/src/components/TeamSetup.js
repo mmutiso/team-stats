@@ -12,6 +12,9 @@ import BackIcon from "@mui/icons-material/ArrowBack";
 import NextIcon from "@mui/icons-material/ArrowForward";
 import { Divider } from "@mui/material";
 import { withRouter } from "react-router";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { registerTeams } from "../store/teamsSlice";
 
 const styles = (theme) => ({
   paper: { width: "42vw", padding: 40, minHeight: "80vh" },
@@ -23,7 +26,13 @@ const steps = [
 ];
 
 class TeamSetup extends React.Component {
-  state = { activeStep: 0 };
+  state = {
+    activeStep: 0,
+    playerName: "",
+    players: [],
+    teamName: "",
+    teams: [],
+  };
 
   handleActiveStep = () => {};
 
@@ -36,11 +45,54 @@ class TeamSetup extends React.Component {
     const { history } = this.props;
 
     if (activeStep === 0) {
+      this.handleTeamSubmission();
       this.setState({ activeStep: 1 });
     } else {
       history.push("/");
     }
   };
+
+  handleTeamChange = (value) => {
+    this.setState({ teamName: value });
+  };
+
+  handlePlayerAddition = () => {
+    const { playerName, players } = this.state;
+
+    if (playerName.length !== 0) {
+      this.setState({ players: [...players, playerName] });
+    }
+  };
+
+  handleTeamAddition = () => {
+    const { teamName, teams } = this.state;
+
+    if (teamName.length !== 0) {
+      this.setState({ teams: [...teams, teamName] });
+    }
+  };
+
+  handleTextFieldChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  handleTeamSubmission = () => {
+    const { teams } = this.state;
+    const { registerTeams } = this.props;
+
+    const clubId = localStorage.getItem("clubId");
+
+    registerTeams({ clubId, teams })
+      .unwrap()
+      .then((data) => {
+        console.log("Data: ", data);
+      })
+      .catch((e) => console.log("Error: ", e));
+  };
+
+  handlePlayerClear = () => {};
+
+  handleTeamClear = () => {};
 
   render() {
     const { classes } = this.props;
@@ -78,16 +130,6 @@ class TeamSetup extends React.Component {
           </div>
           <Divider />
           <div style={{ marginTop: 16, display: "flex" }}>
-            {activeStep === 1 && (
-              <Button
-                onClick={() => handleBack()}
-                size="small"
-                startIcon={<BackIcon />}
-              >
-                Back
-              </Button>
-            )}
-
             <Button
               endIcon={<NextIcon />}
               style={{ marginLeft: "auto" }}
@@ -102,5 +144,12 @@ class TeamSetup extends React.Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return { teams: state.teams };
+};
 
-export default withRouter(withStyles(styles)(TeamSetup));
+const mapDispatchToProps = () => {};
+
+export default connect(mapStateToProps, { registerTeams })(
+  withRouter(withStyles(styles)(TeamSetup))
+);

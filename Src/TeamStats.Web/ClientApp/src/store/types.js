@@ -1,0 +1,4 @@
+export const REGISTER_USER = "REGISTER_USER";
+export const RGISTER_CLUB = "RGISTER_CLUB";
+export const REGISTER_TEAM = "REGISTER_TEAM";
+export const REGISTER_PLAYER = "REGISTER_PLAYER";

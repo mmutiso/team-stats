@@ -42,9 +42,7 @@ const styles = () => ({
 export class PlayersRegistration extends Component {
   state = { teamName: "senior" };
 
-  handleTeamChange = (value) => {
-    this.setState({ teamName: value });
-  };
+
 
   render() {
     const { classes } = this.props;

@@ -64,7 +64,7 @@ class Stats extends Component {
               // align="right"
               // style={{ minWidth: column.minWidth }}
               >
-                Player's Name
+                Name
               </TableCell>
               <TableCell
               // align="right"

@@ -6,6 +6,8 @@ import App from "./App";
 import "./index.css";
 import registerServiceWorker from "./registerServiceWorker";
 
+import { Provider } from "react-redux";
+import store from "./store";
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
 const rootElement = document.getElementById("root");
 
@@ -33,7 +35,9 @@ const theme = createTheme({
 ReactDOM.render(
   <BrowserRouter basename={baseUrl}>
     <ThemeProvider theme={theme}>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </ThemeProvider>
   </BrowserRouter>,
   rootElement
