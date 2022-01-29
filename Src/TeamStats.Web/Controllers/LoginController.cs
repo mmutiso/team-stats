@@ -23,7 +23,7 @@ namespace TeamStats.Web.Controllers
         [Route("login")]
         public async Task<IActionResult> Get()
         {
-            var token = await _identityService.RequestTokenAsync("john.doe@gmail.com");
+            var token = await _identityService.RequestTokenAsync("alice");
 
             return Ok(token);
         }

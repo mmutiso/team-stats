@@ -39,10 +39,7 @@ namespace TeamStats.Web.Services
             
             await _userManager.CreateAsync(user, _configurationOptions.DefaultPassword);
 
-            await _userManager.AddClaimsAsync(user, new System.Security.Claims.Claim[]
-                {
-                      new System.Security.Claims.Claim(JwtClaimTypes.GivenName, identityUserModel.GetGivenName()),
-                });
+            await _userManager.AddClaimsAsync(user, identityUserModel.GetGivenName());
 
             return user;
         }

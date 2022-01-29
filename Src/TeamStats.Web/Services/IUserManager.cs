@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using TeamStats.Core.Identity;
 
@@ -11,6 +11,6 @@ namespace TeamStats.Web.Services
     {
         Task<ApplicationUser> FindByEmailAsync(string email);
         Task CreateAsync(ApplicationUser user, string password);
-        Task AddClaimsAsync(ApplicationUser user, Claim[] claims);
+        Task AddClaimsAsync(ApplicationUser user, string givenName);
     }
 }

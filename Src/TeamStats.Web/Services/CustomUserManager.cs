@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IdentityModel;
+using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -9,19 +11,37 @@ namespace TeamStats.Web.Services
 {
     public class CustomUserManager : IUserManager
     {
-        public Task AddClaimsAsync(ApplicationUser user, Claim[] claims)
+        ApplicationDbContext _dbContext;
+        public CustomUserManager(ApplicationDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+        }    
+        public async Task AddClaimsAsync(ApplicationUser user, string givenName)
+        {
+            var claim = new IdentityUserClaim<Guid>
+            {
+                ClaimType = JwtClaimTypes.GivenName,
+                ClaimValue = givenName,
+                UserId = user.Id
+            };
+            _dbContext.Add(claim);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task CreateAsync(ApplicationUser user, string password)
+        public async Task CreateAsync(ApplicationUser user, string password)
         {
-            throw new NotImplementedException();
+            _dbContext.Add(user);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task<ApplicationUser> FindByEmailAsync(string email)
+        public async Task<ApplicationUser> FindByEmailAsync(string email)
         {
-            throw new NotImplementedException();
+            var user = _dbContext.Users.Where(x => string.Equals(x.Email, email, StringComparison.OrdinalIgnoreCase))
+                            .FirstOrDefault();
+
+            await Task.CompletedTask;
+
+            return user;
         }
     }
 }
