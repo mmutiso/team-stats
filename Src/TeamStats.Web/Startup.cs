@@ -44,11 +44,14 @@ namespace TeamStats.Web
 
             services.AddAuthorization();
 
+
+            services.Configure<RuntimeConfigs>(Configuration.GetSection("RuntimeConfigs"));
+
             string identityServerEndpoint = Configuration["IdentityConfiguration:Authority"];
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = "http://localhost:5000";
+                    options.Authority = identityServerEndpoint;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false,
@@ -71,7 +74,6 @@ namespace TeamStats.Web
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<IUserManager, CustomUserManager>();
 
             services.Configure<PasswordHasherOptions>(options =>
             {

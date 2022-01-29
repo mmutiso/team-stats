@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer", "IdentityS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamStats.Core", "TeamStats.Core\TeamStats.Core.csproj", "{00D1F3C0-D6C4-44AD-B12E-40101DDA1F04}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamStats.UserApi", "TeamStats.UserApi\TeamStats.UserApi.csproj", "{64F84790-C523-4138-B540-573691049147}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{00D1F3C0-D6C4-44AD-B12E-40101DDA1F04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00D1F3C0-D6C4-44AD-B12E-40101DDA1F04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00D1F3C0-D6C4-44AD-B12E-40101DDA1F04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64F84790-C523-4138-B540-573691049147}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64F84790-C523-4138-B540-573691049147}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64F84790-C523-4138-B540-573691049147}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64F84790-C523-4138-B540-573691049147}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
