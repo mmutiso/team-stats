@@ -13,12 +13,12 @@ namespace TeamStats.Web.Services
 {
     public class IdentityService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserManager _userManager;
         private readonly IdentityConfigurationOptions _configurationOptions;
-        public IdentityService(UserManager<ApplicationUser> userManager, IOptions<IdentityConfigurationOptions> configurationOptions)
+        public IdentityService(IUserManager userManager, IOptions<IdentityConfigurationOptions> configurationOptions)
         {
-            _userManager = userManager;
             _configurationOptions = configurationOptions.Value;
+            _userManager = userManager;
         }
 
 
@@ -37,16 +37,12 @@ namespace TeamStats.Web.Services
                 EmailConfirmed = true
             };
             
-            var result = await _userManager.CreateAsync(user, _configurationOptions.DefaultPassword);
-            if (!result.Succeeded)
-                throw new Exception(result.Errors.First().Description);
+            await _userManager.CreateAsync(user, _configurationOptions.DefaultPassword);
 
-            result = await _userManager.AddClaimsAsync(user, new System.Security.Claims.Claim[]
+            await _userManager.AddClaimsAsync(user, new System.Security.Claims.Claim[]
                 {
                       new System.Security.Claims.Claim(JwtClaimTypes.GivenName, identityUserModel.GetGivenName()),
                 });
-            if(!result.Succeeded)
-                throw new Exception(result.Errors.First().Description);
 
             return user;
         }

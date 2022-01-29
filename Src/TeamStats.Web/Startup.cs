@@ -40,7 +40,7 @@ namespace TeamStats.Web
                     });
             });
 
-            services.AddControllersWithViews();
+            services.AddControllers();
 
             services.AddAuthorization();
 
@@ -71,16 +71,14 @@ namespace TeamStats.Web
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            services.AddScoped<IUserManager, CustomUserManager>();
 
             services.AddSwaggerGen();
             // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
+            //services.AddSpaStaticFiles(configuration =>
+            //{
+            //    configuration.RootPath = "ClientApp/build";
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
