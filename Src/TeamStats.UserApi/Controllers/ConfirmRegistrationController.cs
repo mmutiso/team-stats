@@ -7,20 +7,22 @@ using TeamStats.Core.Identity;
 
 namespace TeamStats.UserApi.Controllers
 {
-    public class RegistrationController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class ConfirmRegistrationController : Controller
     {
         private readonly RegisterationService _service;
         private readonly ApplicationDbContext _applicationDbContext;
 
-        public RegistrationController(RegisterationService registerationService,
+        public ConfirmRegistrationController(RegisterationService registerationService,
             ApplicationDbContext applicationDbContext)
         {
             _service = registerationService;
             _applicationDbContext = applicationDbContext;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Confirm([FromQuery] ConfirmUserModel confirmUserModel)
+        [HttpPost]
+        public async Task<IActionResult> Confirm(ConfirmUserModel confirmUserModel)
         {
             if (!ModelState.IsValid)
                 return BadRequest(confirmUserModel);

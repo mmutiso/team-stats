@@ -7,8 +7,9 @@ namespace TeamStats.Web
 {
     public record RuntimeConfigs
     {
-        public string UserAPIEndpoint { get; init; }
+        public string CreateUserAPIEndpoint { get; init; }
         public string Authority { get; init; }
-        public string DefaultPassword { get; set; }
+        public string DefaultPassword { get; init; }
+        public string SymmetricKey { get; init; }
     }
 }

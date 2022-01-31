@@ -43,6 +43,7 @@ namespace TeamStats.Web
             services.AddControllers();
 
             services.AddAuthorization();
+            services.AddHttpClient();
 
 
             services.Configure<RuntimeConfigs>(Configuration.GetSection("RuntimeConfigs"));
@@ -57,12 +58,9 @@ namespace TeamStats.Web
                         ValidateAudience = false,
                         NameClaimType = "given_name"
                     };
-
                     
                     options.RequireHttpsMetadata = false;
                 });
-
-            services.Configure<IdentityConfigurationOptions>(Configuration.GetSection("IdentityConfiguration"));
 
             services.AddDbContext<TeamStatsContext>(options =>
             {

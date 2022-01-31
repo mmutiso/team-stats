@@ -45,7 +45,11 @@ namespace TeamStats.UserApi
             services.AddScoped<RegisterationService>();
 
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(CustomAuthorizationFilter));
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TeamStats.UserApi", Version = "v1" });
