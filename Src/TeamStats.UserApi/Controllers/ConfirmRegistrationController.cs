@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,10 @@ namespace TeamStats.UserApi.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(confirmUserModel);
+
+            bool exists = _applicationDbContext.Users.Any(x => x.Email.ToLower() == confirmUserModel.Email.ToLower());
+            if (exists)
+                return Ok(confirmUserModel.Email);
 
             var registration = _applicationDbContext.ApplicationUserRegistrations
                                 .Where(x => x.Email == confirmUserModel.Email)
