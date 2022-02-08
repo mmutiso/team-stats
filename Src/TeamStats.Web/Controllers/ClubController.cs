@@ -8,6 +8,8 @@ using TeamStats.Web.ApiModels;
 using Microsoft.AspNetCore.Http;
 using TeamStats.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using TeamStats.Core.Identity;
+using IdentityModel;
 
 namespace TeamStats.Web.Controllers
 {
@@ -18,11 +20,13 @@ namespace TeamStats.Web.Controllers
     {
         private readonly ILogger<ClubController> _logger;
         private readonly TeamStatsContext _context;
+        private readonly ApplicationDbContext _applicationDbContext;
 
-        public ClubController(ILogger<ClubController> logger, TeamStatsContext context)
+        public ClubController(ILogger<ClubController> logger, TeamStatsContext context, ApplicationDbContext applicationDbContext)
         {
             _logger = logger;
             _context = context;
+            _applicationDbContext = applicationDbContext;
         }
 
         [HttpPost]
@@ -42,13 +46,26 @@ namespace TeamStats.Web.Controllers
                 Name = newRegistrationModel.ClubName,
                 DateRegistered = DateTime.UtcNow
             };
+
+            var userEmail = User.Claims.Where(x => x.Type == JwtClaimTypes.Email)
+                                .Select(x => x.Value)
+                                .FirstOrDefault();
+
+            var registrationDetails = _applicationDbContext.ApplicationUserRegistrations
+                                        .Where(x => x.Email.ToLower() == userEmail.ToLower())
+                                        .OrderByDescending(x=>x.DateCreatedUtc)
+                                        .FirstOrDefault();
+
+            if (registrationDetails == null)
+                return NotFound(newRegistrationModel);
+
             var person = new Person
             {
                 Id = Guid.NewGuid(),
                 DateCreated = DateTime.UtcNow,
-                Email = newRegistrationModel.Email,
-                Name = newRegistrationModel.ManagerName,
-                PhoneNumber = newRegistrationModel.PhoneNumber,
+                Email = registrationDetails.Email,
+                Name = registrationDetails.Name,
+                PhoneNumber = registrationDetails.PhoneNumber,
                 Type = PersonType.TeamManager,
                 ClubId = club.Id
             };

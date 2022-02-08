@@ -48,7 +48,11 @@ namespace TeamStats.Web
 
             services.Configure<RuntimeConfigs>(Configuration.GetSection("RuntimeConfigs"));
 
-            string identityServerEndpoint = Configuration["IdentityConfiguration:Authority"];
+            string identityServerEndpoint = Configuration.GetValue<string>("RuntimeConfigs:Authority");
+
+            if (string.IsNullOrEmpty(identityServerEndpoint))
+                throw new Exception("Identity server endpoint not loaded");
+
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
@@ -56,7 +60,9 @@ namespace TeamStats.Web
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false,
-                        NameClaimType = "given_name"
+                        NameClaimType = "given_name",
+                         ClockSkew = TimeSpan.FromMinutes(5),
+                          
                     };
                     
                     options.RequireHttpsMetadata = false;
