@@ -1,4 +1,5 @@
 ﻿
+using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
@@ -31,14 +32,12 @@ namespace IdentityServer
             ApplicationUser user = await _userManager.FindByIdAsync(sub);
             var principal = await _claimsPrincipalFactory.CreateAsync(user);
 
-            //context.IssuedClaims = principal.Claims.ToList();
-            Claim givenNameClaim = principal.Claims.Where(x => x.Type == "given_name")
-                                .FirstOrDefault();
+            var requiredClaimTypes = new string[] { JwtClaimTypes.Email, JwtClaimTypes.GivenName };
+            Claim[] claims = principal.Claims.Where(x => requiredClaimTypes.Contains(x.Type))
+                                .ToArray();
 
-            if (givenNameClaim is null)
-                return;
-
-            context.IssuedClaims.Add(givenNameClaim);
+            foreach(var claim in claims)
+                context.IssuedClaims.Add(claim);
         }
 
         public async Task IsActiveAsync(IsActiveContext context)

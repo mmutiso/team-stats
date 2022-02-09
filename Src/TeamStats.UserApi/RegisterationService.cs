@@ -41,6 +41,7 @@ namespace TeamStats.UserApi
             result = await _userManager.AddClaimsAsync(user, new System.Security.Claims.Claim[]
             {
                 new System.Security.Claims.Claim(JwtClaimTypes.GivenName, identityUserModel.GetGivenName()),
+                new System.Security.Claims.Claim(JwtClaimTypes.Email, identityUserModel.Email)
             });
             if (!result.Succeeded)
                 throw new Exception(result.Errors.First().Description);

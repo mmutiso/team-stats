@@ -74,8 +74,6 @@ namespace TeamStats.Web.Controllers
             _context.Add(club);
             _context.SaveChanges();
 
-            //authenticate and return token
-
             return Ok(new RegistrationSuccessfulModel
             {
                 ManagerId = person.Id,
