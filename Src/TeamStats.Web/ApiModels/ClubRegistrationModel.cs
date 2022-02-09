@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace TeamStats.Web.ApiModels
 {
-    public record NewRegistrationModel
+    public record ClubRegistrationModel
     {
         [Required]
         public string ClubName { get; set; }
+
+        [Required]
+        public List<string> Teams { get; set; }
     }
 }

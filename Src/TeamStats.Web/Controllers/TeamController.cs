@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace TeamStats.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post(RegisterTeamsModel registerTeamsModel)
         {
             if (!ModelState.IsValid)
@@ -53,18 +55,6 @@ namespace TeamStats.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok($"registered {registerTeamsModel.Teams.Count} teams");
-        }
-
-
-        [HttpGet]
-        public IActionResult Get(Guid clubId)
-        {
-            if (!_context.Clubs.Where(x => x.Id == clubId).Any())
-                return NotFound(clubId);
-
-            var teams = _context.Teams.Where(x => x.ClubId == clubId);
-
-            return Ok(teams);
         }
     }
 }

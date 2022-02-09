@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TeamStats.Web.Models;
@@ -9,9 +10,10 @@ using TeamStats.Web.Models;
 namespace TeamStats.Web.Migrations
 {
     [DbContext(typeof(TeamStatsContext))]
-    partial class TeamStatsContextModelSnapshot : ModelSnapshot
+    [Migration("20220209040025_Check")]
+    partial class Check
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,9 +156,8 @@ namespace TeamStats.Web.Migrations
                     b.HasKey("Id")
                         .HasName("pk_teams");
 
-                    b.HasIndex("ClubId", "Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_teams_club_id_name");
+                    b.HasIndex("ClubId")
+                        .HasDatabaseName("ix_teams_club_id");
 
                     b.ToTable("teams");
                 });

@@ -19,9 +19,21 @@ namespace TeamStats.Web.Models
             :base(options)
         { }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Team>(options =>
+            {
+                options
+                .HasIndex(x => new { x.ClubId, x.Name })
+                .IsUnique();
+            });
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSnakeCaseNamingConvention();
+
+            
         }
     }
 }

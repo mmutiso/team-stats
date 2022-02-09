@@ -10,6 +10,7 @@ using TeamStats.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using TeamStats.Core.Identity;
 using IdentityModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace TeamStats.Web.Controllers
 {
@@ -33,17 +34,20 @@ namespace TeamStats.Web.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize]
-        public IActionResult Register(NewRegistrationModel newRegistrationModel)
+        public IActionResult Register(ClubRegistrationModel clubRegistrationModel)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(newRegistrationModel);
+                return BadRequest(clubRegistrationModel);
             }
+
+            if (clubRegistrationModel.Teams.Count == 0)
+                return BadRequest(clubRegistrationModel);
 
             var club = new Club
             {
                 Id = Guid.NewGuid(),
-                Name = newRegistrationModel.ClubName,
+                Name = clubRegistrationModel.ClubName,
                 DateRegistered = DateTime.UtcNow
             };
 
@@ -57,7 +61,7 @@ namespace TeamStats.Web.Controllers
                                         .FirstOrDefault();
 
             if (registrationDetails == null)
-                return NotFound(newRegistrationModel);
+                return NotFound(clubRegistrationModel);
 
             var person = new Person
             {
@@ -72,6 +76,19 @@ namespace TeamStats.Web.Controllers
 
             _context.Add(person);
             _context.Add(club);
+
+            foreach (string item in clubRegistrationModel.Teams)
+            {
+                var team = new Team
+                {
+                    Id = Guid.NewGuid(),
+                    Name = item,
+                    ClubId = club.Id,
+                    DateRegistered = DateTime.UtcNow
+                };
+                _context.Add(team);
+            }
+
             _context.SaveChanges();
 
             return Ok(new RegistrationSuccessfulModel
@@ -80,6 +97,30 @@ namespace TeamStats.Web.Controllers
                 ClubId = club.Id,
                 ManagerName = person.Name
             });
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Get(Guid clubId)
+        {
+            var club = _context.Clubs.Where(x => x.Id == clubId)
+                .Include(x => x.Teams)
+                .Select(x => new ClubDetailsModel
+                {
+                    ClubId = x.Id,
+                    ClubName = x.Name,
+                    Teams = x.Teams.Select(y => new TeamDetails
+                    {
+                        TeamId = y.Id,
+                        TeamName = y.Name
+                    }).ToList()
+                })
+                .FirstOrDefault();
+
+            if(club == null)
+                return NotFound(clubId);
+
+            return Ok(club);
         }
     }
 }
