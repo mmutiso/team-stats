@@ -11,5 +11,8 @@ namespace TeamStats.Web
         public string Authority { get; init; }
         public string DefaultPassword { get; init; }
         public string SymmetricKey { get; init; }
+        public string ClientId { get; init; }
+        public string ClientSecret { get; init; }
+        public string Scopes { get; init; }
     }
 }

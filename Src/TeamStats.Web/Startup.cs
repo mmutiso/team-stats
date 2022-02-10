@@ -121,7 +121,7 @@ namespace TeamStats.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller=Health}/{action=Index}/{id?}");
             });
 
             //app.UseSpa(spa =>

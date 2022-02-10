@@ -56,14 +56,39 @@ namespace TeamStats.Web.Services
             if (disco.IsError)
                 throw new Exception(disco.Error);
 
+
             var tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
                 Address = disco.TokenEndpoint,
-                ClientId = "team-stats-web-api",
-                ClientSecret = "secret",
+                ClientId = _configurationOptions.ClientId,
+                ClientSecret = _configurationOptions.ClientSecret,
                 UserName = username,
                 Password = _configurationOptions.DefaultPassword,
-                Scope = "openid profile"
+                Scope = _configurationOptions.Scopes
+            });
+
+            if (tokenResponse.IsError)
+                throw new Exception(tokenResponse.Error);
+
+            return tokenResponse.Json;
+        }
+
+        public async Task<JsonElement> RequestTokenWithRefreshToken(string refereshToken)
+        {
+            HttpClient httpClient = new HttpClient();
+            var disco = await httpClient.GetDiscoveryDocumentAsync(_configurationOptions.Authority);
+
+            if (disco.IsError)
+                throw new Exception(disco.Error);
+
+
+            var tokenResponse = await httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
+            {
+                Address = disco.TokenEndpoint,
+                ClientId = _configurationOptions.ClientId,
+                ClientSecret = _configurationOptions.ClientSecret,
+                RefreshToken = refereshToken,
+                Scope = _configurationOptions.Scopes
             });
 
             if (tokenResponse.IsError)

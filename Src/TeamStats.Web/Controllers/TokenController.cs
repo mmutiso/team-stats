@@ -8,12 +8,14 @@ using TeamStats.Web.Services;
 
 namespace TeamStats.Web.Controllers
 {
-    public class LoginController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class TokenController : Controller
     {
-        private readonly ILogger<LoginController> _logger;
+        private readonly ILogger<TokenController> _logger;
         private readonly IdentityService _identityService;
 
-        public LoginController(ILogger<LoginController> logger, IdentityService identityService)
+        public TokenController(ILogger<TokenController> logger, IdentityService identityService)
         {
             _logger = logger;
             _identityService = identityService;
@@ -21,9 +23,18 @@ namespace TeamStats.Web.Controllers
 
         [HttpGet]
         [Route("login")]
-        public async Task<IActionResult> Get(string username)
+        public async Task<IActionResult> Login(string username)
         {
             var token = await _identityService.RequestTokenAsync(username);
+
+            return Ok(token);
+        }
+
+        [HttpGet]
+        [Route("refresh")]
+        public async Task<IActionResult> Refresh(string refreshToken)
+        {
+            var token = await _identityService.RequestTokenWithRefreshToken(refreshToken);
 
             return Ok(token);
         }
