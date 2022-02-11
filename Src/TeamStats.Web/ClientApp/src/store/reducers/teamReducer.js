@@ -2,40 +2,67 @@ import {
   REGISTER_TEAM_REJECTED,
   REGISTER_TEAM_SUCCESSFUL,
   REQUEST_REGISTER_TEAM,
+  GET_TEAMS,
+  GET_TEAMS_SUCCESSFUL,
+  GET_TEAMS_REJECTED,
 } from "../types";
 
 const initialState = {
-  teamData: [],
-  isTeamLoading: false,
-  teamLoadingError: "",
+  teamsRegistrationResponse: [],
+  isTeamsRegistrationLoading: false,
+  teamsRegistrationError: "",
+  isTeamsListLoading: false,
+  teamsList: [],
+  teamsRequestError: "",
 };
 
-const clubReducer = (state = initialState, action) => {
+const teamReducer = (state = initialState, action) => {
   switch (action.type) {
     case REQUEST_REGISTER_TEAM:
       return {
         ...state,
-        teamData: [],
-        isTeamLoading: false,
-        teamLoadingError: "",
+        teamsRegistrationResponse: [],
+        isTeamsRegistrationLoading: false,
+        teamsRegistrationError: "",
       };
     case REGISTER_TEAM_SUCCESSFUL:
       return {
         ...state,
-        teamData: action.payload,
-        isTeamLoading: false,
-        teamLoadingError: "",
+        teamsRegistrationResponse: action.payload,
+        isTeamsRegistrationLoading: false,
+        teamsRegistrationError: "",
       };
     case REGISTER_TEAM_REJECTED:
       return {
         ...state,
-        teamData: [],
-        isTeamLoading: false,
-        teamLoadingError: action.payload,
+        teamsRegistrationResponse: [],
+        isTeamsRegistrationLoading: false,
+        teamsRegistrationError: action.payload,
+      };
+    case GET_TEAMS:
+      return {
+        ...state,
+        teamsList: [],
+        isTeamsListLoading: false,
+        teamsRequestError: "",
+      };
+    case GET_TEAMS_SUCCESSFUL:
+      return {
+        ...state,
+        teamsList: action.payload,
+        isTeamsListLoading: false,
+        teamsRequestError: "",
+      };
+    case GET_TEAMS_REJECTED:
+      return {
+        ...state,
+        teamsList: [],
+        isTeamsListLoading: false,
+        teamsRequestError: action.payload,
       };
     default:
       return state;
   }
 };
 
-export default clubReducer;
+export default teamReducer;

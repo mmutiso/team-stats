@@ -29,7 +29,7 @@ class TeamSetup extends React.Component {
     team: "",
     teams: [],
     clubName: "",
-    selectedTeam: "",
+    selectedTeam: "none",
   };
 
   handleNext = async () => {
@@ -42,13 +42,12 @@ class TeamSetup extends React.Component {
       registerClub,
       registerTeams,
       registerPlayers,
-      teamData,
+      teamsList,
     } = this.props;
 
-    localStorage.removeItem("clubId");
     if (activeStep === 0) {
       const payload = { managerName: name, email, phoneNumber, clubName };
-
+      localStorage.removeItem("clubId");
       await registerClub(payload);
 
       if (this.props.clubLoadingError.length === 0) {
@@ -62,16 +61,16 @@ class TeamSetup extends React.Component {
       const payload = { clubId, teams: teams };
       await registerTeams(payload);
 
-      if (this.props.teamLoadingError.length === 0) {
+      if (this.props.teamsRegistrationError.length === 0) {
         this.setState({ activeStep: 2 });
       }
     } else {
-      const teamId = teamData.find((team) => team.name === selectedTeam).id;
+      const teamId = teamsList.find((team) => team.name === selectedTeam).id;
       const payload = { teamId, names: players };
 
       await registerPlayers(payload);
 
-      if (this.props.playerLoadingError === 0) {
+      if (this.props.playerLoadingError.length === 0) {
         history.push("/");
       }
     }
@@ -125,7 +124,7 @@ class TeamSetup extends React.Component {
       email,
       phoneNumber,
       isClubLoading,
-      isTeamLoading,
+      isTeamsRegistrationLoading,
       isPlayerLoading,
     } = this.props;
     const { activeStep, clubName, team, player, teams, players, selectedTeam } =
@@ -182,7 +181,7 @@ class TeamSetup extends React.Component {
           justifyContent: "center",
           paddingTop: "12vh",
           // marginBottom: "5vh",
-          maxHeight: "40vh",
+          maxHeight: "50vh",
         }}
       >
         <Paper className={classes.paper}>
@@ -214,7 +213,9 @@ class TeamSetup extends React.Component {
             <div style={{ marginTop: 16, display: "flex" }}>
               <Button
                 endIcon={
-                  isClubLoading || isTeamLoading || isPlayerLoading ? (
+                  isClubLoading ||
+                  isTeamsRegistrationLoading ||
+                  isPlayerLoading ? (
                     <CircularProgress size={16} style={{ color: "#fff" }} />
                   ) : (
                     <NextIcon />
@@ -238,11 +239,12 @@ const mapStateToProps = (state) => ({
   isClubLoading: state.clubs.isClubLoading,
   clubLoadingError: state.clubs.clubLoadingError,
   clubData: state.clubs.clubData,
-  teamData: state.teams.teamData,
+  teamRegistrationResponse: state.teams.teamRegistrationResponse,
   isPlayerLoading: state.players.isPlayerLoading,
-  isTeamLoading: state.teams.isTeamLoading,
-  teamLoadingError: state.teams.teamLoadingError,
+  isTeamsRegistrationLoading: state.teams.isTeamsRegistrationLoading,
+  teamsRegistrationError: state.teams.teamsRegistrationError,
   playerLoadingError: state.players.playerLoadingError,
+  teamsList: state.teams.teamsList,
 });
 
 const mapDispatchToProps = {

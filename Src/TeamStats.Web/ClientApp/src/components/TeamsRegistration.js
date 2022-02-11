@@ -56,7 +56,7 @@ class TeamsRegistration extends Component {
           </Button>
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}></div>
-        <List>
+        <List style={{ maxHeight: "30vh" }}>
           {teams.map((x, i) => (
             <ListItem
               key={i}

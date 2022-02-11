@@ -20,6 +20,7 @@ import { getTeams } from "../store/actions/teamActions";
 import { registerPlayers } from "../store/actions/playerActions";
 
 const styles = () => ({
+  container: {  },
   //   textField: { marginBottom: 8 },
   textFieldContainer: {
     display: "flex",
@@ -46,13 +47,15 @@ export class PlayersRegistration extends Component {
   state = { teamName: "senior" };
 
   componentDidMount = async () => {
-    await this.props.getTeams();
+    const clubId = localStorage.getItem("clubId");
+
+    await this.props.getTeams(clubId);
   };
 
   render() {
     const {
       classes,
-      teamData,
+      teamsList,
       handlePlayerAddition,
       handleChange,
       player,
@@ -63,7 +66,7 @@ export class PlayersRegistration extends Component {
     const { teamName } = this.state;
 
     return (
-      <div>
+      <div className={classes.container}>
         <Typography variant="overline">
           Enter a player's name and hit add
         </Typography>
@@ -82,7 +85,8 @@ export class PlayersRegistration extends Component {
                 label="Select team"
                 onChange={(e) => handleTeamChange(e.target.value)}
               >
-                {teamData.map((x) => (
+                <MenuItem value="none">None</MenuItem>
+                {teamsList?.map((x) => (
                   <MenuItem key={x.id} value={x.name}>
                     {x.name}
                   </MenuItem>
@@ -94,6 +98,7 @@ export class PlayersRegistration extends Component {
             size="small"
             label="Player Name"
             value={player}
+            name="player"
             onChange={(e) => handleChange(e)}
             variant="outlined"
             style={{ width: "60%" }}
@@ -107,7 +112,7 @@ export class PlayersRegistration extends Component {
             Add
           </Button>
         </div>
-        <List>
+        <List style={{ maxHeight: "30vh" }}>
           {players.map((x, i) => (
             <ListItem
               key={i}
@@ -129,7 +134,7 @@ export class PlayersRegistration extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    teamData: state.teams.teamData,
+    teamsList: state.teams.teamsList,
   };
 };
 
