@@ -40,26 +40,33 @@ namespace TeamStats.Web
                     });
             });
 
-            services.AddControllersWithViews();
+            services.AddControllers();
 
             services.AddAuthorization();
+            services.AddHttpClient();
 
-            string identityServerEndpoint = Configuration["IdentityConfiguration:Authority"];
+
+            services.Configure<RuntimeConfigs>(Configuration.GetSection("RuntimeConfigs"));
+
+            string identityServerEndpoint = Configuration.GetValue<string>("RuntimeConfigs:Authority");
+
+            if (string.IsNullOrEmpty(identityServerEndpoint))
+                throw new Exception("Identity server endpoint not loaded");
+
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = "http://localhost:5000";
+                    options.Authority = identityServerEndpoint;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false,
-                        NameClaimType = "given_name"
+                        NameClaimType = "given_name",
+                         ClockSkew = TimeSpan.FromMinutes(5),
+                          
                     };
-
                     
                     options.RequireHttpsMetadata = false;
                 });
-
-            services.Configure<IdentityConfigurationOptions>(Configuration.GetSection("IdentityConfiguration"));
 
             services.AddDbContext<TeamStatsContext>(options =>
             {
@@ -71,16 +78,19 @@ namespace TeamStats.Web
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
 
+            services.Configure<PasswordHasherOptions>(options =>
+            {
+                options.CompatibilityMode = PasswordHasherCompatibilityMode.IdentityV3;
+            });
+
+            services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
             services.AddSwaggerGen();
             // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
+            //services.AddSpaStaticFiles(configuration =>
+            //{
+            //    configuration.RootPath = "ClientApp/build";
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,7 +121,7 @@ namespace TeamStats.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller=Health}/{action=Index}/{id?}");
             });
 
             //app.UseSpa(spa =>

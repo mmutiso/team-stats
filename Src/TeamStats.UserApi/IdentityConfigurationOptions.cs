@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TeamStats.Core.Identity
+namespace TeamStats.UserApi
 {
     public record IdentityConfigurationOptions
     {
-        public string DefaultPassword { get; set; }
-        public string Authority { get; set; }
+        public string DefaultPassword { get; init; }
+        public string Authority { get; init; }
+        public string SymmetricKey { get; init; }
     }
 }

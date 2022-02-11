@@ -14,7 +14,7 @@ namespace TeamStats.Web.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TestController : Controller
+    public class IdentityController : Controller
     {
         [Authorize]
         [HttpGet]

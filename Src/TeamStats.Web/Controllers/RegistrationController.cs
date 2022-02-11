@@ -45,31 +45,17 @@ namespace TeamStats.Web.Controllers
             return Ok($"confirmation email send to {createUserModel.Email}");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Confirm([FromQuery] ConfirmUserModel confirmUserModel)
+        public async Task<IActionResult> ConfirmUser([FromQuery]ConfirmUserModel model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(confirmUserModel);
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(model);
+            }
 
-            var registration = _applicationDbContext.ApplicationUserRegistrations
-                                .Where(x => x.Email == confirmUserModel.Email)
-                                .OrderByDescending(x => x.DateCreatedUtc)
-                                .FirstOrDefault();
+            var result = await _identityService.CreateUserAsync(model);
 
-            if (registration == null)
-                return NotFound(confirmUserModel);
-
-            if (!string.Equals(registration.ConfirmationToken, confirmUserModel.Token, StringComparison.OrdinalIgnoreCase))
-                return BadRequest(confirmUserModel);
-
-            registration.Confirm();
-            await _applicationDbContext.SaveChangesAsync();
-
-            var user = await _identityService.CreateUserAsync(registration);
-
-            var userToken = await _identityService.RequestTokenAsync(user.UserName);
-
-            return Ok(userToken);
+            return Ok(result);
         }
+       
     }
 }

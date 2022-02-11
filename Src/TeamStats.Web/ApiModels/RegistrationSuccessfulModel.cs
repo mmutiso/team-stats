@@ -10,6 +10,5 @@ namespace TeamStats.Web.ApiModels
         public Guid ManagerId { get; init; }
         public Guid ClubId { get; init; }
         public string ManagerName { get; init; }
-        public string AuthToken { get; init; }
     }
 }

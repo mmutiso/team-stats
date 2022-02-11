@@ -10,5 +10,7 @@ namespace TeamStats.Web.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public DateTime DateRegistered { get; set; }
+
+        public ICollection<Team> Teams { get; set; }
     }
 }

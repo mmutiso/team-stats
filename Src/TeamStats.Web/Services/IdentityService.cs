@@ -8,50 +8,47 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using TeamStats.Core.Identity;
 using Microsoft.Extensions.Options;
+using TeamStats.Web.ApiModels;
+using System.Text.Json;
+using Microsoft.Net.Http.Headers;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TeamStats.Web.Services
 {
     public class IdentityService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IdentityConfigurationOptions _configurationOptions;
-        public IdentityService(UserManager<ApplicationUser> userManager, IOptions<IdentityConfigurationOptions> configurationOptions)
+        private readonly RuntimeConfigs _configurationOptions;
+        IHttpClientFactory _httpClientFactory;
+        public IdentityService( IOptions<RuntimeConfigs> configurationOptions, IHttpClientFactory httpClientFactory)
         {
-            _userManager = userManager;
             _configurationOptions = configurationOptions.Value;
+            _httpClientFactory = httpClientFactory;
         }
 
-
-        public async Task<ApplicationUser> CreateUserAsync(ApplicationUserRegistration identityUserModel)
+        public async Task<JsonElement> CreateUserAsync(ConfirmUserModel confirmUserModel)
         {
-            var user = await _userManager.FindByEmailAsync(identityUserModel.Email);
-            if (user != null)
-                return user;
-
-            user = new ApplicationUser
+            HttpClient httpClient = _httpClientFactory.CreateClient();
+            StringContent body = new StringContent(JsonSerializer.Serialize(confirmUserModel), Encoding.UTF8, Application.Json);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, _configurationOptions.CreateUserAPIEndpoint)
             {
-                Id = Guid.NewGuid(),
-                UserName = identityUserModel.Email,
-                Email = identityUserModel.Email,
-                PhoneNumber = identityUserModel.PhoneNumber,
-                EmailConfirmed = true
-            };
-            
-            var result = await _userManager.CreateAsync(user, _configurationOptions.DefaultPassword);
-            if (!result.Succeeded)
-                throw new Exception(result.Errors.First().Description);
-
-            result = await _userManager.AddClaimsAsync(user, new System.Security.Claims.Claim[]
+                Headers =
                 {
-                      new System.Security.Claims.Claim(JwtClaimTypes.GivenName, identityUserModel.GetGivenName()),
-                });
-            if(!result.Succeeded)
-                throw new Exception(result.Errors.First().Description);
+                    { HeaderNames.Authorization, _configurationOptions.SymmetricKey }
+                },
+                 Content = body
+            };
 
-            return user;
+
+            var result = await httpClient.SendAsync(requestMessage);
+            result.EnsureSuccessStatusCode();
+
+            string username = await result.Content.ReadAsStringAsync();
+            JsonElement token = await RequestTokenAsync(username);
+
+            return token;
         }
-
-        public async Task<object> RequestTokenAsync(string username)
+        public async Task<JsonElement> RequestTokenAsync(string username)
         {
             HttpClient httpClient = new HttpClient();
             var disco = await httpClient.GetDiscoveryDocumentAsync(_configurationOptions.Authority);
@@ -59,14 +56,39 @@ namespace TeamStats.Web.Services
             if (disco.IsError)
                 throw new Exception(disco.Error);
 
+
             var tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
                 Address = disco.TokenEndpoint,
-                ClientId = "team-stats-web-api",
-                ClientSecret = "secret",
-                UserName =username,
+                ClientId = _configurationOptions.ClientId,
+                ClientSecret = _configurationOptions.ClientSecret,
+                UserName = username,
                 Password = _configurationOptions.DefaultPassword,
-                Scope = "openid profile"
+                Scope = _configurationOptions.Scopes
+            });
+
+            if (tokenResponse.IsError)
+                throw new Exception(tokenResponse.Error);
+
+            return tokenResponse.Json;
+        }
+
+        public async Task<JsonElement> RequestTokenWithRefreshToken(string refereshToken)
+        {
+            HttpClient httpClient = new HttpClient();
+            var disco = await httpClient.GetDiscoveryDocumentAsync(_configurationOptions.Authority);
+
+            if (disco.IsError)
+                throw new Exception(disco.Error);
+
+
+            var tokenResponse = await httpClient.RequestRefreshTokenAsync(new RefreshTokenRequest
+            {
+                Address = disco.TokenEndpoint,
+                ClientId = _configurationOptions.ClientId,
+                ClientSecret = _configurationOptions.ClientSecret,
+                RefreshToken = refereshToken,
+                Scope = _configurationOptions.Scopes
             });
 
             if (tokenResponse.IsError)
