@@ -25,11 +25,22 @@ namespace TeamStats.Web
 
         public IConfiguration Configuration { get; }
 
+        private EmailSettings GetEmailSettings()
+        {
+            string username = Environment.GetEnvironmentVariable("GMAIL_USERNAME");
+            string password = Environment.GetEnvironmentVariable("GMAIL_PASSWORD");
+            var settings = new EmailSettings(username, password);
+
+            return settings;
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
            
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddSingleton<EmailSettings>(GetEmailSettings());
 
             services.AddCors(options =>
             {
@@ -44,6 +55,8 @@ namespace TeamStats.Web
 
             services.AddAuthorization();
             services.AddHttpClient();
+            services.AddScoped<EmailRequestFactory>();
+            services.AddScoped<IEmailSender, GmailEmailSender>();
 
 
             services.Configure<RuntimeConfigs>(Configuration.GetSection("RuntimeConfigs"));
