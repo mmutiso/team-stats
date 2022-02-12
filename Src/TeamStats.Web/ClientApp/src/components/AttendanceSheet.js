@@ -33,7 +33,7 @@ const styles = () => ({
   },
 });
 
-class Tracker extends Component {
+class AttendanceSheet extends Component {
   render() {
     const { classes } = this.props;
 
@@ -76,4 +76,4 @@ class Tracker extends Component {
   }
 }
 
-export default withStyles(styles)(Tracker);
+export default withStyles(styles)(AttendanceSheet);

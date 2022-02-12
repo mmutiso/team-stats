@@ -30,7 +30,7 @@ const styles = (theme) => ({
   },
 });
 
-class Stats extends Component {
+class AttendanceAnalytics extends Component {
   render() {
     const { classes } = this.props;
 
@@ -90,4 +90,4 @@ class Stats extends Component {
   }
 }
 
-export default withStyles(styles)(Stats);
+export default withStyles(styles)(AttendanceAnalytics);

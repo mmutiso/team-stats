@@ -20,7 +20,7 @@ import { getTeams } from "../store/actions/teamActions";
 import { registerPlayers } from "../store/actions/playerActions";
 
 const styles = () => ({
-  container: {  },
+  container: {},
   //   textField: { marginBottom: 8 },
   textFieldContainer: {
     display: "flex",
@@ -62,6 +62,7 @@ export class PlayersRegistration extends Component {
       players,
       handleTeamChange,
       selectedTeam,
+      handleKeyDown,
     } = this.props;
     const { teamName } = this.state;
 
@@ -103,6 +104,7 @@ export class PlayersRegistration extends Component {
             variant="outlined"
             style={{ width: "60%" }}
             className={classes.textField}
+            onKeyDown={(e) => handleKeyDown(e)}
           />
           <Button
             startIcon={<AddIcon size="small" />}

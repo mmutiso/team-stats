@@ -28,8 +28,14 @@ const styles = (theme) => ({
 
 class TeamsRegistration extends Component {
   render() {
-    const { classes, handleTeamAddition, handleChange, team, teams } =
-      this.props;
+    const {
+      classes,
+      handleTeamAddition,
+      handleKeyDown,
+      handleChange,
+      team,
+      teams,
+    } = this.props;
 
     return (
       <div className={classes.container}>
@@ -46,6 +52,7 @@ class TeamsRegistration extends Component {
             placeholder="eg. Senior, U21, U16"
             style={{ width: "80%" }}
             onChange={(e) => handleChange(e)}
+            onKeyDown={(e) => handleKeyDown(e)}
           />
           <Button
             startIcon={<AddIcon size="small" />}
@@ -56,7 +63,7 @@ class TeamsRegistration extends Component {
           </Button>
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}></div>
-        <List style={{ maxHeight: "30vh" }}>
+        <List style={{ maxHeight: "30vh", overflowY: "auto" }}>
           {teams.map((x, i) => (
             <ListItem
               key={i}

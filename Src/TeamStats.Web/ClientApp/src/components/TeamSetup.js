@@ -18,7 +18,12 @@ import { registerTeams } from "../store/actions/teamActions";
 import { registerPlayers } from "../store/actions/playerActions";
 
 const styles = (theme) => ({
-  paper: { width: "42vw", padding: 40, minHeight: "80vh" },
+  paper: {
+    width: "42vw",
+    padding: 40,
+    minHeight: "80vh",
+    position: "relative",
+  },
 });
 
 class TeamSetup extends React.Component {
@@ -47,28 +52,28 @@ class TeamSetup extends React.Component {
 
     if (activeStep === 0) {
       const payload = { managerName: name, email, phoneNumber, clubName };
-      localStorage.removeItem("clubId");
-      await registerClub(payload);
+      // localStorage.removeItem("clubId");
+      // await registerClub(payload);
 
-      if (this.props.clubLoadingError.length === 0) {
-        let clubId = this.props.clubData.clubId;
+      // if (this.props.clubLoadingError.length === 0) {
+      //   let clubId = this.props.clubData.clubId;
 
-        localStorage.setItem("clubId", clubId);
-        this.setState({ activeStep: 1 });
-      }
+      //   localStorage.setItem("clubId", clubId);
+      this.setState({ activeStep: 1 });
+      // }
     } else if (activeStep === 1) {
-      let clubId = localStorage.getItem("clubId");
-      const payload = { clubId, teams: teams };
-      await registerTeams(payload);
+      // let clubId = localStorage.getItem("clubId");
+      // const payload = { clubId, teams: teams };
+      // await registerTeams(payload);
 
-      if (this.props.teamsRegistrationError.length === 0) {
-        this.setState({ activeStep: 2 });
-      }
+      // if (this.props.teamsRegistrationError.length === 0) {
+      this.setState({ activeStep: 2 });
+      // }
     } else {
-      const teamId = teamsList.find((team) => team.name === selectedTeam).id;
-      const payload = { teamId, names: players };
+      // const teamId = teamsList.find((team) => team.name === selectedTeam).id;
+      // const payload = { teamId, names: players };
 
-      await registerPlayers(payload);
+      // await registerPlayers(payload);
 
       if (this.props.playerLoadingError.length === 0) {
         history.push("/");
@@ -105,6 +110,19 @@ class TeamSetup extends React.Component {
     }
   };
 
+  handleKeyDown = (e) => {
+    const { activeStep } = this.state;
+    const { handleTeamAddition, handlePlayerAddition } = this;
+
+    if (e.which === 13 && activeStep === 1) {
+      handleTeamAddition();
+    } else if (e.which === 13 && activeStep === 2) {
+      handlePlayerAddition();
+    } else {
+      return;
+    }
+  };
+
   handleTextFieldChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
@@ -133,6 +151,7 @@ class TeamSetup extends React.Component {
       handleNext,
       handleClubNameChange,
       handleTeamAddition,
+      handleKeyDown,
       handlePlayerAddition,
       handleTextFieldChange,
       handleTeamChange,
@@ -153,6 +172,7 @@ class TeamSetup extends React.Component {
         component: (
           <TeamsRegistration
             handleTeamAddition={handleTeamAddition}
+            handleKeyDown={handleKeyDown}
             handleChange={handleTextFieldChange}
             team={team}
             teams={teams}
@@ -164,6 +184,7 @@ class TeamSetup extends React.Component {
         component: (
           <PlayersRegistration
             handlePlayerAddition={handlePlayerAddition}
+            handleKeyDown={handleKeyDown}
             handleChange={handleTextFieldChange}
             handleTeamChange={handleTeamChange}
             selectedTeam={selectedTeam}
@@ -208,9 +229,11 @@ class TeamSetup extends React.Component {
               ? steps[1].component
               : steps[2].component}
           </div>
-          <div style={{ marginTop: "auto" }}>
+          <div
+            style={{ position: "absolute", bottom: 5, width: "100%", left: 0 }}
+          >
             <Divider />
-            <div style={{ marginTop: 16, display: "flex" }}>
+            <div style={{ marginTop: 8, display: "flex" }}>
               <Button
                 endIcon={
                   isClubLoading ||
@@ -221,7 +244,7 @@ class TeamSetup extends React.Component {
                     <NextIcon />
                   )
                 }
-                style={{ marginLeft: "auto" }}
+                style={{ marginLeft: "auto", marginRight: 32 }}
                 size="small"
                 onClick={() => handleNext()}
                 disabled={clubName.length === 0}

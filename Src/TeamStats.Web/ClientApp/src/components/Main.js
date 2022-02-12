@@ -11,8 +11,8 @@ import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
 import TextField from "@mui/material/TextField";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import Tracker from "./Tracker";
-import Stats from "./Stats";
+import AttendanceSheet from "./AttendanceSheet";
+import AttendanceAnalytics from "./AttendanceAnalytics";
 
 const styles = (theme) => ({
   paper: {
@@ -87,7 +87,7 @@ class Main extends Component {
         <Paper elevation={0} className={classes.paper}>
           {HorizontalBar}
         </Paper>
-        {selectedIndex === 0 ? <Stats /> : <Tracker />}
+        {selectedIndex === 0 ? <AttendanceAnalytics /> : <AttendanceSheet />}
       </>
     );
   }
