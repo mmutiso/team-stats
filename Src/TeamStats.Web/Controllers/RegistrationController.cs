@@ -19,13 +19,17 @@ namespace TeamStats.Web.Controllers
         private readonly ILogger<RegistrationController> _logger;
         private readonly IdentityService _identityService;
         private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IEmailSender _emailSender;
+        private readonly EmailRequestFactory _emailRequestFactory;
 
         public RegistrationController(ILogger<RegistrationController> logger, IdentityService identityService,
-            ApplicationDbContext applicationDbContext)
+            ApplicationDbContext applicationDbContext, IEmailSender emailSender, EmailRequestFactory emailRequestFactory)
         {
             _logger = logger;
             _identityService = identityService;
             _applicationDbContext = applicationDbContext;
+            _emailSender = emailSender;
+            _emailRequestFactory = emailRequestFactory;
         }
 
         [HttpPost]
@@ -41,6 +45,8 @@ namespace TeamStats.Web.Controllers
             await _applicationDbContext.SaveChangesAsync();
 
             //Send email to user with token
+            var request = _emailRequestFactory.CreateForTokenConfirmation(createUserModel.Email, registration.ConfirmationToken);
+            await _emailSender.SendEmailAsync(request);            
 
             return Ok($"confirmation email send to {createUserModel.Email}");
         }

@@ -7,6 +7,6 @@ namespace TeamStats.Web.Services
 {
     public interface IEmailSender
     {
-        public Task SendEmail(SendEmailRequest sendEmailRequest);
+        public Task SendEmailAsync(SendEmailRequest sendEmailRequest);
     }
 }

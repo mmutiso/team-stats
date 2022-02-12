@@ -3,8 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-TeamStats.UserApi/Properties/launchSettings.json
-TeamStats.Web/Properties/launchSettings.json
+Src/TeamStats.UserApi/Properties/launchSettings.json
+Src/TeamStats.Web/Properties/launchSettings.json
 
 # User-specific files
 *.rsuser
