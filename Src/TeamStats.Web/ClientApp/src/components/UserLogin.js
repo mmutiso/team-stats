@@ -9,8 +9,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { withRouter } from "react-router";
 
 import { connect } from "react-redux";
-import { axiosInstance } from "../utils/axiosInstance";
-import { registerUser } from "../store/actions/userActions";
+import { loginUser } from "../store/actions/userActions";
 
 const styles = (theme) => ({
   paper: { width: "40vw", padding: 40 },
@@ -19,20 +18,18 @@ const styles = (theme) => ({
   textField: { width: "100%" },
 });
 
-class UserRegistration extends Component {
+class UserLogin extends Component {
   state = {
     name: "Francis Mutiso",
-    email: "franckmutiso@gmail.com",
-    phoneNumber: "0713759499",
   };
 
   handleSubmit = async () => {
-    const { history, registerUser } = this.props;
-    const { name, email, phoneNumber } = this.state;
+    const { loginUser } = this.props;
+    const { name } = this.state;
 
-    const payload = { name, email, phoneNumber };
+    const payload = { name };
 
-    await registerUser(payload);
+    await loginUser(payload);
   };
 
   handleChange = (e) => {
@@ -40,11 +37,12 @@ class UserRegistration extends Component {
   };
 
   render() {
-    const { classes, userLoadingError, isUserLoading, userData } = this.props;
+    const { classes, userLoginError, isUserLoginLoading, userLoginData } =
+      this.props;
     const { handleSubmit, handleChange } = this;
-    const { name, email, phoneNumber } = this.state;
+    const { name } = this.state;
 
-    const confirmationMsg = userData.length !== 0 && userData;
+    // const confirmationMsg = userLoginData.length !== 0 && userLoginData;
 
     return (
       <div
@@ -60,66 +58,39 @@ class UserRegistration extends Component {
               variant="h5"
               style={{ fontWeight: 700, textTransform: "uppercase" }}
             >
-              Register
+              Login
             </Typography>
             <Typography variant="overline" style={{ marginTop: 8 }}>
-              Kindly enter the following details to get started.
+              Kindly enter your full name to login.
             </Typography>
-            {confirmationMsg && (
+            {/* {confirmationMsg && (
               <div style={{ marginTop: 8 }}>
                 <Typography variant="caption" color="primary">
                   {confirmationMsg}
                 </Typography>
               </div>
-            )}
+            )} */}
 
-            {userLoadingError.length !== 0 && (
+            {/* {userLoginError.length !== 0 && (
               <div style={{ marginTop: 8 }}>
                 <Typography variant="caption" style={{ color: "#F4504E" }}>
-                  User Registration not successful. Try again!
+                  User Login not successful. Try again!
                 </Typography>
               </div>
-            )}
+            )} */}
           </div>
           <form className={classes.form}>
             <div className={classes.textFieldContainer}>
               <TextField
                 color="primary"
                 size="small"
-                label="Name"
+                label="Full Name"
                 name="name"
                 value={name}
                 variant="outlined"
                 type="text"
                 fullWidth
                 onChange={(e) => handleChange(e)}
-              />
-            </div>
-            <div className={classes.textFieldContainer}>
-              <TextField
-                color="primary"
-                size="small"
-                label="Email"
-                variant="outlined"
-                name="email"
-                value={email}
-                type="email"
-                fullWidth
-                onChange={(e) => handleChange(e)}
-              />
-            </div>
-            <div className={classes.textFieldContainer}>
-              <TextField
-                size="small"
-                id="outlined-basic"
-                label="Phone"
-                variant="outlined"
-                type="phone"
-                name="phoneNumber"
-                value={phoneNumber}
-                fullWidth
-                onChange={(e) => handleChange(e)}
-                placeholder="eg. 0712345678"
               />
             </div>
           </form>
@@ -134,18 +105,16 @@ class UserRegistration extends Component {
               variant="contained"
               size="small"
               endIcon={
-                isUserLoading ? (
+                isUserLoginLoading ? (
                   <CircularProgress size={16} style={{ color: "#fff" }} />
                 ) : (
                   <NextIcon />
                 )
               }
               onClick={() => handleSubmit()}
-              disabled={
-                name === "" || email === "" || phoneNumber.length !== 10
-              }
+              disabled={name === ""}
             >
-              Submit
+              Login
             </Button>
           </div>
         </Paper>
@@ -156,14 +125,12 @@ class UserRegistration extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    userData: state.users.userData,
-    isUserLoading: state.users.isUserLoading,
-    userLoadingError: state.users.userLoadingError,
+    userLoginData: state.users.userLoginData,
+    isUserLoginLoading: state.users.isUserLoginLoading,
+    userLoginError: state.users.userLoginError,
   };
 };
 
 export default withRouter(
-  withStyles(styles)(
-    connect(mapStateToProps, { registerUser })(UserRegistration)
-  )
+  withStyles(styles)(connect(mapStateToProps, { loginUser })(UserLogin))
 );

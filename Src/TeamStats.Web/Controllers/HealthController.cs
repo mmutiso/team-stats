@@ -12,6 +12,7 @@ namespace TeamStats.Web.Controllers
     public class HealthController : Controller
     {
         [Route("index")]
+        [HttpGet]
         public IActionResult Index()
         {
             return Ok(DateTime.Now.ToString());

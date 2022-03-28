@@ -41,9 +41,6 @@ namespace TeamStats.Web.Controllers
                 return BadRequest(clubRegistrationModel);
             }
 
-            if (clubRegistrationModel.Teams.Count == 0)
-                return BadRequest(clubRegistrationModel);
-
             var club = new Club
             {
                 Id = Guid.NewGuid(),
@@ -76,18 +73,6 @@ namespace TeamStats.Web.Controllers
 
             _context.Add(person);
             _context.Add(club);
-
-            foreach (string item in clubRegistrationModel.Teams)
-            {
-                var team = new Team
-                {
-                    Id = Guid.NewGuid(),
-                    Name = item,
-                    ClubId = club.Id,
-                    DateRegistered = DateTime.UtcNow
-                };
-                _context.Add(team);
-            }
 
             _context.SaveChanges();
 

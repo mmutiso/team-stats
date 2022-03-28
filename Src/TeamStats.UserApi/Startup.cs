@@ -50,6 +50,11 @@ namespace TeamStats.UserApi
                 options.Filters.Add(typeof(CustomAuthorizationFilter));
             });
 
+            services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder => 
+            {
+                builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+            }));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TeamStats.UserApi", Version = "v1" });
@@ -69,6 +74,8 @@ namespace TeamStats.UserApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("ApiCorsPolicy");
 
             app.UseAuthorization();
 

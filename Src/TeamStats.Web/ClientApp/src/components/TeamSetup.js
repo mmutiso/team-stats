@@ -14,7 +14,7 @@ import { CircularProgress, Divider } from "@mui/material";
 import { withRouter } from "react-router";
 import { connect } from "react-redux";
 import { registerClub } from "../store/actions/clubActions";
-import { registerTeams } from "../store/actions/teamActions";
+import { registerTeams, getTeams } from "../store/actions/teamActions";
 import { registerPlayers } from "../store/actions/playerActions";
 
 const styles = (theme) => ({
@@ -37,43 +37,61 @@ class TeamSetup extends React.Component {
     selectedTeam: "none",
   };
 
+  componentDidMount = async () => {
+    const clubId = localStorage.getItem("clubId");
+
+    if (clubId) {
+      this.setState({ activeStep: 1 });
+    }
+
+    await this.props.getTeams(clubId);
+
+    if (this.props.teamsList.length !== 0) {
+      this.setState({ activeStep: 2 });
+    }
+  };
+
+  handleRemoveTeam = (x) => {
+    const remainingTeams = this.state.teams.filter((team) => team !== x);
+    this.setState({ teams: remainingTeams });
+  };
+
+  handleRemovePlayer = (x) => {
+    const remainingPlayers = this.state.players.filter(
+      (player) => player !== x
+    );
+    this.setState({ players: remainingPlayers });
+  };
+
   handleNext = async () => {
     const { activeStep, clubName, teams, players, selectedTeam } = this.state;
-    const {
-      history,
-      name,
-      email,
-      phoneNumber,
-      registerClub,
-      registerTeams,
-      registerPlayers,
-      teamsList,
-    } = this.props;
+    const { history, registerClub, registerTeams, registerPlayers, teamsList } =
+      this.props;
 
     if (activeStep === 0) {
-      const payload = { managerName: name, email, phoneNumber, clubName };
-      // localStorage.removeItem("clubId");
-      // await registerClub(payload);
+      const payload = { clubName };
+      localStorage.removeItem("clubId");
+      await registerClub(payload);
 
-      // if (this.props.clubLoadingError.length === 0) {
-      //   let clubId = this.props.clubData.clubId;
+      if (this.props.clubLoadingError.length === 0) {
+        let clubId = this.props.clubData.clubId;
 
-      //   localStorage.setItem("clubId", clubId);
-      this.setState({ activeStep: 1 });
-      // }
+        localStorage.setItem("clubId", clubId);
+        this.setState({ activeStep: 1 });
+      }
     } else if (activeStep === 1) {
-      // let clubId = localStorage.getItem("clubId");
-      // const payload = { clubId, teams: teams };
-      // await registerTeams(payload);
+      let clubId = localStorage.getItem("clubId");
+      const payload = { clubId, teams: teams };
+      await registerTeams(payload);
 
-      // if (this.props.teamsRegistrationError.length === 0) {
-      this.setState({ activeStep: 2 });
-      // }
+      if (this.props.teamsRegistrationError.length === 0) {
+        this.setState({ activeStep: 2 });
+      }
     } else {
-      // const teamId = teamsList.find((team) => team.name === selectedTeam).id;
-      // const payload = { teamId, names: players };
+      const teamId = teamsList.find((team) => team.name === selectedTeam).id;
+      const payload = { teamId, names: players };
 
-      // await registerPlayers(payload);
+      await registerPlayers(payload);
 
       if (this.props.playerLoadingError.length === 0) {
         history.push("/");
@@ -94,9 +112,8 @@ class TeamSetup extends React.Component {
     const { handlePlayerClear } = this;
 
     if (player.length !== 0) {
-      this.setState(
-        { players: [...players, player] } /*() =>
-        handlePlayerClear()*/
+      this.setState({ players: [...players, player] }, () =>
+        handlePlayerClear()
       );
     }
   };
@@ -106,7 +123,7 @@ class TeamSetup extends React.Component {
     const { handleTeamClear } = this;
 
     if (team.length !== 0) {
-      this.setState({ teams: [...teams, team] } /*() => handleTeamClear()*/);
+      this.setState({ teams: [...teams, team] }, () => handleTeamClear());
     }
   };
 
@@ -132,15 +149,12 @@ class TeamSetup extends React.Component {
   };
 
   handleTeamClear = () => {
-    this.setState({ teams: "" });
+    this.setState({ team: "" });
   };
 
   render() {
     const {
       classes,
-      name,
-      email,
-      phoneNumber,
       isClubLoading,
       isTeamsRegistrationLoading,
       isPlayerLoading,
@@ -155,6 +169,8 @@ class TeamSetup extends React.Component {
       handlePlayerAddition,
       handleTextFieldChange,
       handleTeamChange,
+      handleRemoveTeam,
+      handleRemovePlayer,
     } = this;
 
     const steps = [
@@ -174,6 +190,7 @@ class TeamSetup extends React.Component {
             handleTeamAddition={handleTeamAddition}
             handleKeyDown={handleKeyDown}
             handleChange={handleTextFieldChange}
+            handleRemoveTeam={handleRemoveTeam}
             team={team}
             teams={teams}
           />
@@ -190,6 +207,7 @@ class TeamSetup extends React.Component {
             selectedTeam={selectedTeam}
             player={player}
             players={players}
+            handleRemovePlayer={handleRemovePlayer}
           />
         ),
       },
@@ -209,11 +227,13 @@ class TeamSetup extends React.Component {
           <div
             style={{
               textAlign: "center",
-              marginBottom: 30,
+              marginBottom: 24,
               textTransform: "uppercase",
             }}
           >
-            <Typography variant="h6">Team Registration</Typography>
+            <Typography variant="subtitle1">
+              Club Registration Details
+            </Typography>
           </div>
           <Stepper activeStep={activeStep} alternativeLabel>
             {steps.map((x, index) => (
@@ -247,7 +267,13 @@ class TeamSetup extends React.Component {
                 style={{ marginLeft: "auto", marginRight: 32 }}
                 size="small"
                 onClick={() => handleNext()}
-                disabled={clubName.length === 0}
+                disabled={
+                  activeStep === 0
+                    ? clubName.length === 0
+                    : activeStep === 1
+                    ? teams.length === 0
+                    : players.length === 0
+                }
               >
                 {activeStep <= 1 ? "Next" : "Submit"}
               </Button>
@@ -274,6 +300,7 @@ const mapDispatchToProps = {
   registerClub,
   registerTeams,
   registerPlayers,
+  getTeams,
 };
 
 export default connect(

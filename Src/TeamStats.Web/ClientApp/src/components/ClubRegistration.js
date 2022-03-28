@@ -9,7 +9,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { withRouter } from "react-router";
 import { registerClub } from "../store/actions/clubActions";
 import { connect } from "react-redux";
-import { axiosInstance } from "../axiosInstance";
+import { axiosInstance } from "../utils/axiosInstance";
 
 const styles = (theme) => ({
   paper: { width: "40vw", padding: 40 },

@@ -1,79 +1,123 @@
 import React, { Component } from "react";
-import Checkbox from "@mui/material/Checkbox";
-import {
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Paper,
-} from "@mui/material";
-import withStyles from "@mui/styles/withStyles";
-
-const styles = () => ({
-  paper: {
-    height: "67.5vh",
-    border: "1px solid #E0E0E0",
-    overflowY: "auto",
-    "&::-webkit-scrollbar": {
-      width: 7,
-    },
-
-    "&::-webkit-scrollbar-track": {
-      borderRadius: 999,
-      backgroundColor: "#e0e0e0",
-    },
-
-    "&::-webkit-scrollbar-thumb": {
-      backgroundColor: "#606060",
-      borderRadius: 999,
-    },
-    marginBottom: 16,
-    paddingTop: 8,
-    paddingBottom: 8,
-  },
-});
+import { Table } from "./reusableComponents";
+import "./AttendanceSheet.css";
+import { getPlayers } from "../store/actions/playerActions";
+import { registerPlayersAttendance } from "../store/actions/attendanceActions";
+import { connect } from "react-redux";
+import { Button } from "@mui/material";
 
 class AttendanceSheet extends Component {
-  render() {
-    const { classes } = this.props;
+  constructor(props) {
+    super(props);
+    this.state = { selectedPlayers: [] };
+  }
 
-    const PLAYERS = [
-      { id: 1, name: "Player 1" },
-      { id: 2, name: "Player 2" },
-      { id: 3, name: "Player 3" },
-      { id: 4, name: "Player 4" },
-      { id: 5, name: "Player 5" },
-      { id: 6, name: "Player 6" },
-      { id: 7, name: "Player 7" },
-      { id: 8, name: "Player 8" },
-      { id: 9, name: "Player 9" },
-      { id: 10, name: "Player 10" },
-    ];
+  componentDidUpdate = async (prevProps) => {
+    const { globalTeam, teamsList } = this.props;
+
+    if (prevProps.globalTeam !== globalTeam) {
+      if (globalTeam === "none") {
+        await this.props.getPlayers();
+      } else {
+        const teamId = teamsList.find((x) => x.name === globalTeam).id;
+        await this.props.getPlayers(teamId);
+      }
+    }
+  };
+
+  handleSelectedPlayers = (selectedPlayer) => {
+    const { selectedPlayers } = this.state;
+    const player = selectedPlayers.indexOf(selectedPlayer) !== -1;
+    const that = this;
+
+    if (player) {
+      const remainingPlayers = this.state.selectedPlayers.filter(
+        (x) => x.name !== selectedPlayer.name
+      );
+
+      that.setState({ selectedPlayers: remainingPlayers });
+    } else {
+      that.setState({
+        selectedPlayers: [...selectedPlayers, selectedPlayer],
+      });
+    }
+  };
+
+  handleSubmit = async () => {
+    const { registerPlayersAttendance, globalDate } = this.props;
+    const { selectedPlayers } = this.state;
+
+    if (selectedPlayers.length !== 0) {
+      const payload = {
+        date: globalDate,
+        players: selectedPlayers.map((x) => x.id),
+      };
+      console.log(payload);
+      await registerPlayersAttendance(payload);
+    }
+  };
+
+  render() {
+    const { playersData, isPlayerLoading, isAttendanceLoading } = this.props;
+    const { selectedPlayers } = this.state;
+    const { handleSelectedPlayers, handleSubmit } = this;
 
     return (
-      <Paper elevation={0} className={classes.paper}>
-        <List component="nav" dense>
-          {PLAYERS.map((x) => (
-            <ListItem
-              key={x.id}
-              // button
-              secondaryAction={
-                <Checkbox
-                  edge="end"
-                  onChange={() => {}}
-                  // checked={}
-                />
-              }
+      <>
+        <div className="attendanceSheet">
+          {isPlayerLoading ? (
+            <p
+              style={{
+                height: "100%",
+                width: "100%",
+                display: "grid",
+                placeItems: "center",
+              }}
             >
-              <ListItemButton>
-                <ListItemText>{x.name}</ListItemText>
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Paper>
+              Loading...
+            </p>
+          ) : (
+            <div>
+              <Table
+                headers={["Name"]}
+                data={playersData}
+                checkbox
+                handleClick={handleSelectedPlayers}
+                selectedPlayers={selectedPlayers}
+              />
+            </div>
+          )}
+        </div>
+        <div
+          style={{
+            marginTop: 16,
+            display: "flex",
+            justifyContent: "flex-end",
+            width: "100%",
+          }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleSubmit()}
+          >
+            {isAttendanceLoading ? "Submitting..." : "Submit"}
+          </Button>
+        </div>
+      </>
     );
   }
 }
 
-export default withStyles(styles)(AttendanceSheet);
+const mapStateToProps = (state) => ({
+  playersData: state.players.playersData,
+  isPlayerLoading: state.teams.isPlayerLoading,
+  globalTeam: state.globalState.globalTeam,
+  globalDate: state.globalState.globalDate,
+  teamsList: state.teams.teamsList,
+  isAttendanceLoading: state.attendance.isAttendanceLoading,
+});
+
+const mapDispatchToProps = { getPlayers, registerPlayersAttendance };
+
+export default connect(mapStateToProps, mapDispatchToProps)(AttendanceSheet);

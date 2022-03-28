@@ -1,7 +1,97 @@
 .home {
-  height: "100vh";
+  height: 100vh;
+  display: grid;
+  grid-template-areas: "pane main main main main main main main main main main main";
+}
+
+.homeSidePane {
+  grid-area: pane;
+}
+
+.homeMain {
+  grid-area: main;
 }
 
 .tabs {
   border-right: 1px solid #e0e0e0;
+}
+
+.mainHorizontalBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px;
+  height: 64px;
+}
+
+.mainHorizontalBarText {
+  font-weight: 600;
+}
+.mainHorizontalBarSelectors {
+  display: flex;
+}
+
+.mainBottom {
+  padding: 16px;
+}
+
+.sidePaneContainer {
+  height: 100vh;
+  border-right: 1px solid #e0e0e0;
+}
+.sidePaneLogo {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+.sidePaneLogoText {
+  font-family: "Sora";
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding-left: 16px;
+  padding-right: 16px;
+  color: #113b3d;
+}
+
+.sidePaneLogoText:hover {
+  color: #22494b;
+}
+.sidePaneItem {
+  padding-left: 16px;
+  padding-right: 16px;
+  display: flex;
+  align-items: center;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  cursor: pointer;
+}
+
+.sidePaneItemSelected {
+  background-color: #0f393b;
+  color: white;
+  padding-left: 16px;
+  padding-right: 16px;
+  display: flex;
+  align-items: center;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  cursor: pointer;
+}
+
+.sidePaneItem:hover {
+  background-color: #e0e0e0;
+}
+.sidePaneIcon {
+  font-size: 20px;
+  margin-left: 8px;
+}
+.sidePaneText {
+  margin-left: 8px;
 }

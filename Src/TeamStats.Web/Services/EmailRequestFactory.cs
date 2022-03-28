@@ -22,6 +22,7 @@ namespace TeamStats.Web.Services
         {
             string subject = "Team stats - Registration Confirmation";
             string body = $"{_runtimeConfigs.UIAppBaseUrl}/registration?Email={recipient}&Token={token}";
+            // string body = $"http://localhost:3000/registration?Email={recipient}&Token={token}"
 
             var request = new SendEmailRequest
             {

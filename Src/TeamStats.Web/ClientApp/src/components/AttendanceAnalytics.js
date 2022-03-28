@@ -1,43 +1,39 @@
 import React, { Component } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import withStyles from "@mui/styles/withStyles";
-import Paper from "@mui/material/Paper";
-
-const styles = (theme) => ({
-  paper: {
-    // border: "1px solid #E0E0E0",
-    marginTop: 16,
-    height: "67vh",
-    overflowY: "auto",
-    "&::-webkit-scrollbar": {
-      width: 7,
-    },
-
-    "&::-webkit-scrollbar-track": {
-      borderRadius: 999,
-      backgroundColor: "#e0e0e0",
-    },
-
-    "&::-webkit-scrollbar-thumb": {
-      backgroundColor: "#606060",
-      borderRadius: 999,
-    },
-    marginBottom: 16,
-  },
-});
+import { Table } from "./reusableComponents";
+import "./AttendanceAnalytics.css";
+import { connect } from "react-redux";
+import { getPlayersAttendance } from "../store/actions/attendanceActions";
 
 class AttendanceAnalytics extends Component {
-  render() {
-    const { classes } = this.props;
+  componentDidMount = async () => {
+    const { getPlayersAttendance, globalTeam, teamsList } = this.props;
 
-    const columns = [
-      { id: "name", name: "Name" },
-      { id: "count", name: "Attendance Count" },
-    ];
+    if (globalTeam !== "none") {
+      const teamId = teamsList.find((x) => x.name === globalTeam).id;
+
+      await getPlayersAttendance(teamId);
+    }
+  };
+
+  componentDidUpdate = async (prevProps) => {
+    const { globalTeam, teamsList } = this.props;
+
+    if (prevProps.globalTeam != globalTeam) {
+      if (globalTeam === "none") {
+        await this.props.getPlayersAttendance();
+      } else {
+        const teamId = teamsList.find((x) => x.name === globalTeam).id;
+        await this.props.getPlayersAttendance(teamId);
+      }
+    }
+  };
+
+  handleSelectedPlayer = (selectedPlayer) => {
+    console.log(selectedPlayer);
+  };
+
+  render() {
+    const { handleSelectedPlayer } = this;
 
     const rows = [
       { id: "player1", name: "Player 1", count: 10 },
@@ -49,45 +45,29 @@ class AttendanceAnalytics extends Component {
       { id: "player7", name: "Player 7", count: 9 },
       { id: "player8", name: "Player 8", count: 30 },
       { id: "player9", name: "Player 9", count: 25 },
+      { id: "player10", name: "Player 10", count: 25 },
     ];
 
     return (
-      <Paper className={classes.paper}>
+      <div className="attendanceAnalytics">
         <Table
-          stickyHeader
-          aria-label="sticky table"
-          component={(props) => <Paper elevation={0} {...props} />}
-        >
-          <TableHead>
-            <TableRow>
-              <TableCell
-              // align="right"
-              // style={{ minWidth: column.minWidth }}
-              >
-                Name
-              </TableCell>
-              <TableCell
-              // align="right"
-              // style={{ minWidth: column.minWidth }}
-              >
-                Attendance Count
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => {
-              return (
-                <TableRow hover role="checkbox" key={row.id}>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.count}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Paper>
+          headers={["Name", "Attendances"]}
+          data={rows}
+          handleClick={handleSelectedPlayer}
+        />
+      </div>
     );
   }
 }
+const mapStateToProps = (state) => ({
+  playersData: state.teams.playersData,
+  globalTeam: state.globalState.globalTeam,
+  teamsList: state.teams.teamsList,
+});
 
-export default withStyles(styles)(AttendanceAnalytics);
+const mapDispatchToProps = { getPlayersAttendance };
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AttendanceAnalytics);

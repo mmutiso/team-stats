@@ -35,6 +35,7 @@ class TeamsRegistration extends Component {
       handleChange,
       team,
       teams,
+      handleRemoveTeam,
     } = this.props;
 
     return (
@@ -69,7 +70,7 @@ class TeamsRegistration extends Component {
               key={i}
               button
               secondaryAction={
-                <IconButton size="small">
+                <IconButton size="small" onClick={() => handleRemoveTeam(x)}>
                   <CloseIcon style={{ fontSize: 18 }} />
                 </IconButton>
               }

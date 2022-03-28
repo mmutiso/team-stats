@@ -56,5 +56,21 @@ namespace TeamStats.Web.Controllers
 
             return Ok($"registered {registerTeamsModel.Teams.Count} teams");
         }
+
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Get(Guid? clubId)
+        {
+            if(!clubId.HasValue)
+                return BadRequest(clubId);
+
+            var teams = _context.Teams
+                .Where(x => x.ClubId == clubId)
+                .Select(x => new {Id = x.Id, Name = x.Name})
+                .ToList();
+
+            return Ok(teams);
+        }
     }
 }

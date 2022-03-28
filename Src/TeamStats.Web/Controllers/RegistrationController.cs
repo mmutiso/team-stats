@@ -51,6 +51,7 @@ namespace TeamStats.Web.Controllers
             return Ok($"confirmation email send to {createUserModel.Email}");
         }
 
+       
         public async Task<IActionResult> ConfirmUser([FromQuery]ConfirmUserModel model)
         {
             if(!ModelState.IsValid)

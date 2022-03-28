@@ -11,7 +11,6 @@ namespace TeamStats.Web.ApiModels
         [Required]
         public string ClubName { get; set; }
 
-        [Required]
-        public List<string> Teams { get; set; }
+        
     }
 }

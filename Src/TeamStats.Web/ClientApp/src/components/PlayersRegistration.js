@@ -63,8 +63,8 @@ export class PlayersRegistration extends Component {
       handleTeamChange,
       selectedTeam,
       handleKeyDown,
+      handleRemovePlayer,
     } = this.props;
-    const { teamName } = this.state;
 
     return (
       <div className={classes.container}>
@@ -120,7 +120,7 @@ export class PlayersRegistration extends Component {
               key={i}
               button
               secondaryAction={
-                <IconButton size="small">
+                <IconButton size="small" onClick={() => handleRemovePlayer(x)}>
                   <CloseIcon style={{ fontSize: 18 }} />
                 </IconButton>
               }

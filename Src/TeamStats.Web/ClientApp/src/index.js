@@ -14,7 +14,7 @@ const rootElement = document.getElementById("root");
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#00B074",
+      main: "#0f393b",
       contrastText: "#fff",
     },
     secondary: {
@@ -27,7 +27,7 @@ const theme = createTheme({
   },
 
   typography: {
-    fontFamily: ["Inter"].join(","),
+    fontFamily: ["Sora"].join(","),
     fontSize: 13,
   },
 });

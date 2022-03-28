@@ -8,7 +8,7 @@ namespace TeamStats.Web.Controllers
 {
 
     [ApiController]
-    
+    [Route("[controller]")]
     public class ErrorController : Controller
     {
 

@@ -4,7 +4,7 @@ import {
   REQUEST_REGISTER_CLUB,
 } from "../types";
 
-import { axiosInstance } from "../../axiosInstance";
+import { axiosInstance } from "../../utils/axiosInstance";
 
 export const registerClub = (payload) => async (dispatch) => {
   dispatch({ type: REQUEST_REGISTER_CLUB });

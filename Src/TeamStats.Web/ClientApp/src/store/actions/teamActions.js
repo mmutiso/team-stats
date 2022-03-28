@@ -7,7 +7,7 @@ import {
   GET_TEAMS_REJECTED,
 } from "../types";
 
-import { axiosInstance } from "../../axiosInstance";
+import { axiosInstance } from "../../utils/axiosInstance";
 
 export const registerTeams = (payload) => async (dispatch) => {
   dispatch({ type: REQUEST_REGISTER_TEAM });
