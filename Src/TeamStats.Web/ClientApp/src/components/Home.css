@@ -1,7 +1,8 @@
 .home {
   height: 100vh;
   display: grid;
-  grid-template-areas: "pane main main main main main main main main main main main";
+  grid-template-areas: "pane main";
+  grid-template-columns: 20vw 80vw;
 }
 
 .homeSidePane {

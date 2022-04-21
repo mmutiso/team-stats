@@ -21,7 +21,7 @@ class App extends React.Component {
     return (
       <div style={{}}>
         <Switch>
-          <Route path="/register-user">
+          <Route path='/userRegistration'>
             <UserRegistration
               handleChange={handleRegistrationChange}
               name={name}
@@ -29,16 +29,16 @@ class App extends React.Component {
               phoneNumber={phoneNumber}
             />
           </Route>
-          <Route path="/register-club">
+          <Route path='/clubRegistration'>
             <TeamSetup name={name} email={email} phoneNumber={phoneNumber} />
           </Route>
-          <Route exact path="/registration">
+          <Route exact path='/userConfirmation'>
             <EmailConfirmation />
           </Route>
-          <Route path="/login">
+          <Route path='/login'>
             <UserLogin />
           </Route>
-          <Route path="/">
+          <Route path='/'>
             <Home />
           </Route>
         </Switch>

@@ -42,7 +42,7 @@ class UserLogin extends Component {
     const { handleSubmit, handleChange } = this;
     const { name } = this.state;
 
-    // const confirmationMsg = userLoginData.length !== 0 && userLoginData;
+    // const confirmationMsg = userLoginData && userLoginData.length !== 0;
 
     return (
       <div
@@ -55,12 +55,12 @@ class UserLogin extends Component {
         <Paper className={classes.paper}>
           <div style={{ textAlign: "center", marginBottom: 20 }}>
             <Typography
-              variant="h5"
+              variant='h5'
               style={{ fontWeight: 700, textTransform: "uppercase" }}
             >
               Login
             </Typography>
-            <Typography variant="overline" style={{ marginTop: 8 }}>
+            <Typography variant='overline' style={{ marginTop: 8 }}>
               Kindly enter your full name to login.
             </Typography>
             {/* {confirmationMsg && (
@@ -82,13 +82,13 @@ class UserLogin extends Component {
           <form className={classes.form}>
             <div className={classes.textFieldContainer}>
               <TextField
-                color="primary"
-                size="small"
-                label="Full Name"
-                name="name"
+                color='primary'
+                size='small'
+                label='Full Name'
+                name='name'
                 value={name}
-                variant="outlined"
-                type="text"
+                variant='outlined'
+                type='text'
                 fullWidth
                 onChange={(e) => handleChange(e)}
               />
@@ -102,8 +102,8 @@ class UserLogin extends Component {
             }}
           >
             <Button
-              variant="contained"
-              size="small"
+              variant='contained'
+              size='small'
               endIcon={
                 isUserLoginLoading ? (
                   <CircularProgress size={16} style={{ color: "#fff" }} />

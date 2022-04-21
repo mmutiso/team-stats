@@ -115,7 +115,7 @@ export class PlayersRegistration extends Component {
           </Button>
         </div>
         <List style={{ maxHeight: "30vh" }}>
-          {players.map((x, i) => (
+          {players?.map((x, i) => (
             <ListItem
               key={i}
               button

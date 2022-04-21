@@ -57,25 +57,25 @@ class UserRegistration extends Component {
         <Paper className={classes.paper}>
           <div style={{ textAlign: "center", marginBottom: 20 }}>
             <Typography
-              variant="h5"
+              variant='h5'
               style={{ fontWeight: 700, textTransform: "uppercase" }}
             >
               Register
             </Typography>
-            <Typography variant="overline" style={{ marginTop: 8 }}>
+            <Typography variant='overline' style={{ marginTop: 8 }}>
               Kindly enter the following details to get started.
             </Typography>
             {confirmationMsg && (
               <div style={{ marginTop: 8 }}>
-                <Typography variant="caption" color="primary">
+                <Typography variant='caption' color='primary'>
                   {confirmationMsg}
                 </Typography>
               </div>
             )}
 
-            {userLoadingError.length !== 0 && (
+            {userLoadingError?.length !== 0 && (
               <div style={{ marginTop: 8 }}>
-                <Typography variant="caption" style={{ color: "#F4504E" }}>
+                <Typography variant='caption' style={{ color: "#F4504E" }}>
                   User Registration not successful. Try again!
                 </Typography>
               </div>
@@ -84,42 +84,42 @@ class UserRegistration extends Component {
           <form className={classes.form}>
             <div className={classes.textFieldContainer}>
               <TextField
-                color="primary"
-                size="small"
-                label="Name"
-                name="name"
+                color='primary'
+                size='small'
+                label='Name'
+                name='name'
                 value={name}
-                variant="outlined"
-                type="text"
+                variant='outlined'
+                type='text'
                 fullWidth
                 onChange={(e) => handleChange(e)}
               />
             </div>
             <div className={classes.textFieldContainer}>
               <TextField
-                color="primary"
-                size="small"
-                label="Email"
-                variant="outlined"
-                name="email"
+                color='primary'
+                size='small'
+                label='Email'
+                variant='outlined'
+                name='email'
                 value={email}
-                type="email"
+                type='email'
                 fullWidth
                 onChange={(e) => handleChange(e)}
               />
             </div>
             <div className={classes.textFieldContainer}>
               <TextField
-                size="small"
-                id="outlined-basic"
-                label="Phone"
-                variant="outlined"
-                type="phone"
-                name="phoneNumber"
+                size='small'
+                id='outlined-basic'
+                label='Phone'
+                variant='outlined'
+                type='phone'
+                name='phoneNumber'
                 value={phoneNumber}
                 fullWidth
                 onChange={(e) => handleChange(e)}
-                placeholder="eg. 0712345678"
+                placeholder='eg. 0712345678'
               />
             </div>
           </form>
@@ -131,8 +131,8 @@ class UserRegistration extends Component {
             }}
           >
             <Button
-              variant="contained"
-              size="small"
+              variant='contained'
+              size='small'
               endIcon={
                 isUserLoading ? (
                   <CircularProgress size={16} style={{ color: "#fff" }} />

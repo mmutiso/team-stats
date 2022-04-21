@@ -9,6 +9,7 @@
   font-family: inherit;
   cursor: pointer;
   transition: 0.25s ease-in-out;
+  width: "100%";
 }
 
 button:hover {
