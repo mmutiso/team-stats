@@ -22,15 +22,6 @@ namespace TeamStats.Web.Controllers
         }
 
         [HttpGet]
-        [Route("login")]
-        public async Task<IActionResult> Login(string username)
-        {
-            var token = await _identityService.RequestTokenAsync(username);
-
-            return Ok(token);
-        }
-
-        [HttpGet]
         [Route("refresh")]
         public async Task<IActionResult> Refresh(string refreshToken)
         {

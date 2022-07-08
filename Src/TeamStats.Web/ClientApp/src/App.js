@@ -32,7 +32,10 @@ class App extends React.Component {
           <Route path='/clubRegistration'>
             <TeamSetup name={name} email={email} phoneNumber={phoneNumber} />
           </Route>
-          <Route exact path='/userConfirmation'>
+          {/* <Route exact path='/userConfirmation'>
+            <EmailConfirmation />
+          </Route> */}
+          <Route exact path='/registration'>
             <EmailConfirmation />
           </Route>
           <Route path='/login'>

@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { confirmUserRegistration } from "../store/actions/userActions";
 import { red } from "../theme";
 
-export class EmailConfirmation extends Component {
+class EmailConfirmation extends Component {
   handleClick = async () => {
     const { history, location, confirmUserRegistration } = this.props;
     const email = new URLSearchParams(location.search).get("Email");
@@ -26,17 +26,17 @@ export class EmailConfirmation extends Component {
     const { isUserConfirmationLoading, userConfirmationError } = this.props;
 
     return (
-      <div className="emailConfirmation">
-        <div className="emailConfirmationContainer">
+      <div className='emailConfirmation'>
+        <div className='emailConfirmationContainer'>
           {userConfirmationError?.length > 0 && (
             <p
-              className="emailConfirmationText emailConfirmationError"
+              className='emailConfirmationText emailConfirmationError'
               style={{ color: red }}
             >
               {userConfirmationError}
             </p>
           )}
-          <p className="emailConfirmationText">Confirm Registration?</p>
+          <p className='emailConfirmationText'>Confirm Registration?</p>
           <Button
             loading={isUserConfirmationLoading}
             label={isUserConfirmationLoading ? "Confirming..." : "Confirm"}

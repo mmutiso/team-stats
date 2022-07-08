@@ -26,11 +26,14 @@ namespace TeamStats.Web.Services
 
             try
             {
+                Console.WriteLine(sendEmailRequest.Body);
+                
                 await client.SendMailAsync(sendEmailRequest.From, sendEmailRequest.To, sendEmailRequest.Subject, sendEmailRequest.Body);
+                
             }
             catch (Exception ex)
             {
-                
+                Console.WriteLine(ex.Message);
             }
             
             
