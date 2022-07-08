@@ -24,12 +24,16 @@ namespace TeamStats.Web.Services
                 EnableSsl = true
             };
 
+            MailAddress from = new MailAddress(_emailSettings.Username, "Team Performance");
+            MailAddress to = new MailAddress(sendEmailRequest.To);
+            MailMessage mail = new MailMessage(from, to);
+            mail.Subject = sendEmailRequest.Subject;
+            mail.Body = sendEmailRequest.Body;
+            mail.IsBodyHtml = false;
+
             try
             {
-                Console.WriteLine(sendEmailRequest.Body);
-                
-                await client.SendMailAsync(sendEmailRequest.From, sendEmailRequest.To, sendEmailRequest.Subject, sendEmailRequest.Body);
-                
+                await client.SendMailAsync(mail);
             }
             catch (Exception ex)
             {
