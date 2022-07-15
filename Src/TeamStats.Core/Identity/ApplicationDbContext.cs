@@ -12,7 +12,7 @@ namespace TeamStats.Core.Identity
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-           
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -30,6 +30,12 @@ namespace TeamStats.Core.Identity
             {
                 x.HasKey(y => y.Id);
                 x.ToTable("application_user_registrations");
+            });
+
+            builder.Entity<ApplicationUserLogin>(x =>
+            {
+                x.HasKey(y => y.Id);
+                x.ToTable("application_user_logins");
             });
         }
     }

@@ -37,7 +37,7 @@ namespace TeamStats.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           
+
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddSingleton<EmailSettings>(GetEmailSettings());
@@ -57,6 +57,7 @@ namespace TeamStats.Web
             services.AddHttpClient();
             services.AddScoped<EmailRequestFactory>();
             services.AddScoped<IEmailSender, GmailEmailSender>();
+            services.AddScoped<LoginService>();
 
 
             services.Configure<RuntimeConfigs>(Configuration.GetSection("RuntimeConfigs"));
@@ -74,10 +75,10 @@ namespace TeamStats.Web
                     {
                         ValidateAudience = false,
                         NameClaimType = "given_name",
-                         ClockSkew = TimeSpan.FromMinutes(5),
-                          
+                        ClockSkew = TimeSpan.FromMinutes(5),
+
                     };
-                    
+
                     options.RequireHttpsMetadata = false;
                 });
 

@@ -14,11 +14,34 @@ namespace TeamStats.Web.Controllers
     {
         private readonly ILogger<TokenController> _logger;
         private readonly IdentityService _identityService;
-
+        private readonly LoginService _loginService;
         public TokenController(ILogger<TokenController> logger, IdentityService identityService)
         {
             _logger = logger;
             _identityService = identityService;
+            _loginService = _loginService;
+        }
+
+        [Route("request")]
+        [HttpGet]
+        public async Task<IActionResult> Request([FromQuery] string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return BadRequest(nameof(email));
+
+            await _loginService.GenerateAndSendMagicLink(email);
+
+            return Ok($"Login request email send to {email}");
+        }
+
+        [Route("login")]
+        [HttpGet]
+        public async Task<IActionResult> Login([FromQuery] ConfirmUserLoginModel model)
+        {
+            if (string.IsNullOrEmpty(model.Email))
+                return BadRequest(nameof(model.Email));
+
+            var token = await _identityService.RequestTokenAsync(email)
         }
 
         [HttpGet]
