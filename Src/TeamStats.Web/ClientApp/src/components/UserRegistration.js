@@ -1,169 +1,190 @@
-import React, { Component } from "react";
-import TextField from "@mui/material/TextField";
-import withStyles from "@mui/styles/withStyles";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import NextIcon from "@mui/icons-material/ArrowForward";
-import Paper from "@mui/material/Paper";
-import CircularProgress from "@mui/material/CircularProgress";
-import { withRouter } from "react-router";
+import React, { Component } from 'react';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Button from '@mui/material/Button';
+import { withRouter } from 'react-router';
 
-import { connect } from "react-redux";
-import { axiosInstance } from "../utils/axiosInstance";
-import { registerUser } from "../store/actions/userActions";
-
-const styles = (theme) => ({
-  paper: { width: "40vw", padding: 40 },
-  form: { display: "flex", flexDirection: "column" },
-  textFieldContainer: { marginBottom: 16 },
-  textField: { width: "100%" },
-});
+import './UserRegistration.css';
+import { connect } from 'react-redux';
+import {
+	registerUser,
+	confirmUserRegistration,
+} from '../store/actions/userActions';
+import UserConfirmation from './UserConfirmation';
+import { isValidEmail } from '../utils/isValidEmail';
 
 class UserRegistration extends Component {
-  state = {
-    name: "Francis Mutiso",
-    email: "franckmutiso@gmail.com",
-    phoneNumber: "0713759499",
-  };
+	state = {
+		name: '',
+		email: '',
+		phoneNumber: '',
+		phoneError: false,
+		nameError: false,
+		emailError: false,
+		invalidEmailError: false,
+	};
 
-  handleSubmit = async () => {
-    const { history, registerUser } = this.props;
-    const { name, email, phoneNumber } = this.state;
+	handleNameChange = (e) => {
+		this.setState({ name: e.target.value, nameError: false });
+	};
 
-    const payload = { name, email, phoneNumber };
+	handleEmailChange = (e) => {
+		this.setState({
+			email: e.target.value,
+			emailError: false,
+			invalidEmailError: false,
+		});
+	};
 
-    await registerUser(payload);
-  };
+	handlePhoneChange = (e) => {
+		this.setState({ phoneNumber: e.target.value, phoneError: false });
+	};
 
-  handleChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+	handleSubmit = async () => {
+		const { name, email, phoneNumber } = this.state;
 
-  render() {
-    const { classes, userLoadingError, isUserLoading, userData } = this.props;
-    const { handleSubmit, handleChange } = this;
-    const { name, email, phoneNumber } = this.state;
+		if (name.length === 0) {
+			this.setState({ nameError: true });
+		}
 
-    const confirmationMsg = userData.length !== 0 && userData;
+		if (email.length === 0) {
+			this.setState({ emailError: true });
+		}
 
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          paddingTop: "16vh",
-        }}
-      >
-        <Paper className={classes.paper}>
-          <div style={{ textAlign: "center", marginBottom: 20 }}>
-            <Typography
-              variant='h5'
-              style={{ fontWeight: 700, textTransform: "uppercase" }}
-            >
-              Register
-            </Typography>
-            <Typography variant='overline' style={{ marginTop: 8 }}>
-              Kindly enter the following details to get started.
-            </Typography>
-            {confirmationMsg && (
-              <div style={{ marginTop: 8 }}>
-                <Typography variant='caption' color='primary'>
-                  {confirmationMsg}
-                </Typography>
-              </div>
-            )}
+		if (!isValidEmail(email)) {
+			this.setState({ invalidEmailError: true });
+		}
 
-            {userLoadingError?.length !== 0 && (
-              <div style={{ marginTop: 8 }}>
-                <Typography variant='caption' style={{ color: "#F4504E" }}>
-                  User Registration not successful. Try again!
-                </Typography>
-              </div>
-            )}
-          </div>
-          <form className={classes.form}>
-            <div className={classes.textFieldContainer}>
-              <TextField
-                color='primary'
-                size='small'
-                label='Name'
-                name='name'
-                value={name}
-                variant='outlined'
-                type='text'
-                fullWidth
-                onChange={(e) => handleChange(e)}
-              />
-            </div>
-            <div className={classes.textFieldContainer}>
-              <TextField
-                color='primary'
-                size='small'
-                label='Email'
-                variant='outlined'
-                name='email'
-                value={email}
-                type='email'
-                fullWidth
-                onChange={(e) => handleChange(e)}
-              />
-            </div>
-            <div className={classes.textFieldContainer}>
-              <TextField
-                size='small'
-                id='outlined-basic'
-                label='Phone'
-                variant='outlined'
-                type='phone'
-                name='phoneNumber'
-                value={phoneNumber}
-                fullWidth
-                onChange={(e) => handleChange(e)}
-                placeholder='eg. 0712345678'
-              />
-            </div>
-          </form>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 16,
-            }}
-          >
-            <Button
-              variant='contained'
-              size='small'
-              endIcon={
-                isUserLoading ? (
-                  <CircularProgress size={16} style={{ color: "#fff" }} />
-                ) : (
-                  <NextIcon />
-                )
-              }
-              onClick={() => handleSubmit()}
-              disabled={
-                name === "" || email === "" || phoneNumber.length !== 10
-              }
-            >
-              Submit
-            </Button>
-          </div>
-        </Paper>
-      </div>
-    );
-  }
+		if (phoneNumber.length < 10 || phoneNumber.length > 10) {
+			this.setState({ phoneError: true });
+		}
+
+		const payload = { name, email, phoneNumber };
+
+		await this.props.registerUser(payload);
+	};
+
+	handleConfirmation = async () => {
+		const { location, history } = this.props;
+
+		const params = new URLSearchParams(location.search);
+
+		const email = params.get('Email');
+		const token = params.get('Token');
+
+		const payload = { email, token };
+
+		await this.props.confirmUserRegistration(payload);
+
+		// if(this.props.userConfirmationError.length == 0){
+		// 	history.push()
+		// }
+	};
+
+	render() {
+		const {
+			name,
+			phoneNumber,
+			email,
+			nameError,
+			emailError,
+			phoneError,
+			invalidEmailError,
+		} = this.state;
+		const {
+			handleNameChange,
+			handleSubmit,
+			handleEmailChange,
+			handlePhoneChange,
+			handleConfirmation,
+		} = this;
+
+		const { isUserLoading, location, history, confirmUserRegistration } =
+			this.props;
+
+		const params = new URLSearchParams(location.search);
+
+		const queryEmail = params.get('Email');
+		const queryToken = params.get('Token');
+
+		if (queryEmail && queryToken) {
+			return <UserConfirmation handleConfirmation={handleConfirmation} />;
+		}
+
+		return (
+			<div className='user-registration'>
+				<div className='user-registration-input'>
+					<TextField
+						id='outlined-basic'
+						label='Name'
+						variant='outlined'
+						fullWidth
+						value={name}
+						name='name'
+						onChange={handleNameChange}
+						error={nameError}
+						helperText={nameError && 'The name is required'}
+					/>
+				</div>
+				<div className='user-registration-input'>
+					<TextField
+						id='outlined-basic'
+						label='Email'
+						variant='outlined'
+						fullWidth
+						className='user-registration-input'
+						name='email'
+						value={email}
+						onChange={handleEmailChange}
+						error={emailError || invalidEmailError}
+						helperText={
+							emailError
+								? 'The email is required'
+								: invalidEmailError
+								? 'Invalid email format'
+								: ''
+						}
+					/>
+				</div>
+				<div className='user-registration-input'>
+					<TextField
+						id='outlined-basic'
+						label='Phone number'
+						variant='outlined'
+						fullWidth
+						className='user-registration-input'
+						name='phone'
+						value={phoneNumber}
+						onChange={handlePhoneChange}
+						placeholder='example: 0712345678'
+						error={phoneError}
+						helperText={phoneError && 'The phone number is required'}
+					/>
+				</div>
+				<div className='user-registration-button'>
+					<Button
+						variant='contained'
+						color='secondary'
+						onClick={handleSubmit}
+						fullWidth
+						disabled={isUserLoading}
+					>
+						Submit
+					</Button>
+				</div>
+			</div>
+		);
+	}
 }
 
-const mapStateToProps = (state) => {
-  return {
-    userData: state.users.userData,
-    isUserLoading: state.users.isUserLoading,
-    userLoadingError: state.users.userLoadingError,
-  };
+const mapStateToProps = (state) => ({ ...state.users });
+
+const mapDispatchToProps = {
+	registerUser,
+	confirmUserRegistration,
 };
 
-export default withRouter(
-  withStyles(styles)(
-    connect(mapStateToProps, { registerUser })(UserRegistration)
-  )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(withRouter(UserRegistration));

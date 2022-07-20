@@ -8,6 +8,7 @@ namespace TeamStats.Core.Identity
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         public DbSet<ApplicationUserRegistration> ApplicationUserRegistrations { get; set; }
+        public DbSet<ApplicationUserLogin> ApplicationUserLogins { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

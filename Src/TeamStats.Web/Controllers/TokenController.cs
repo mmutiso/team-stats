@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TeamStats.Web.ApiModels;
 using TeamStats.Web.Services;
 
 namespace TeamStats.Web.Controllers
@@ -15,23 +16,25 @@ namespace TeamStats.Web.Controllers
         private readonly ILogger<TokenController> _logger;
         private readonly IdentityService _identityService;
         private readonly LoginService _loginService;
-        public TokenController(ILogger<TokenController> logger, IdentityService identityService)
+
+        public TokenController(ILogger<TokenController> logger, IdentityService identityService,
+            LoginService loginService)
         {
             _logger = logger;
             _identityService = identityService;
-            _loginService = _loginService;
+            _loginService = loginService;
         }
 
         [Route("request")]
         [HttpGet]
-        public async Task<IActionResult> Request([FromQuery] string email)
+        public async Task<IActionResult> RequestToken([FromQuery] string email)
         {
             if (string.IsNullOrEmpty(email))
                 return BadRequest(nameof(email));
 
             await _loginService.GenerateAndSendMagicLink(email);
 
-            return Ok($"Login request email send to {email}");
+            return Ok($"Login request email sent to {email}");
         }
 
         [Route("login")]
@@ -41,7 +44,16 @@ namespace TeamStats.Web.Controllers
             if (string.IsNullOrEmpty(model.Email))
                 return BadRequest(nameof(model.Email));
 
-            var token = await _identityService.RequestTokenAsync(email)
+            var loginValid = await _loginService.ConfirmMagicLinkIsValid(model.Email, model.ConfirmationToken);
+            
+            if(!loginValid)
+            {
+                return BadRequest($"Invalid login request");
+            }
+
+            var token = await _identityService.RequestTokenAsync(model.Email);
+
+            return Ok(token);
         }
 
         [HttpGet]

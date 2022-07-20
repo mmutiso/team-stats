@@ -1,136 +1,106 @@
-import React, { Component } from "react";
-import TextField from "@mui/material/TextField";
-import withStyles from "@mui/styles/withStyles";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import NextIcon from "@mui/icons-material/ArrowForward";
-import Paper from "@mui/material/Paper";
-import CircularProgress from "@mui/material/CircularProgress";
-import { withRouter } from "react-router";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
-import { connect } from "react-redux";
-import { loginUser } from "../store/actions/userActions";
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { isValidEmail } from '../utils/isValidEmail';
 
-const styles = (theme) => ({
-  paper: { width: "40vw", padding: 40 },
-  form: { display: "flex", flexDirection: "column" },
-  textFieldContainer: { marginBottom: 16 },
-  textField: { width: "100%" },
-});
+import { requestUserLogin } from '../store/actions/userActions';
 
-class UserLogin extends Component {
-  state = {
-    name: "Francis Mutiso",
-  };
+import './UserLogin.css';
+import UserConfirmation from './UserConfirmation';
 
-  handleSubmit = async () => {
-    const { loginUser } = this.props;
-    const { name } = this.state;
+export class UserLogin extends Component {
+	state = { email: '', invalidEmailError: false, emailError: false };
 
-    const payload = { name };
+	handleChange = (e) => {
+		this.setState({
+			email: e.target.value,
+			emailError: false,
+			invalidEmailError: false,
+		});
+	};
 
-    await loginUser(payload);
-  };
+	handleSubmit = async () => {
+		const { email } = this.state;
 
-  handleChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+		if (email.length === 0) {
+			this.setState({ emailError: true });
+		}
 
-  render() {
-    const { classes, userLoginError, isUserLoginLoading, userLoginData } =
-      this.props;
-    const { handleSubmit, handleChange } = this;
-    const { name } = this.state;
+		if (!isValidEmail(email)) {
+			this.setState({ invalidEmailError: true });
+		}
 
-    // const confirmationMsg = userLoginData && userLoginData.length !== 0;
+		await this.props.requestUserLogin(email);
+	};
 
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          paddingTop: "16vh",
-        }}
-      >
-        <Paper className={classes.paper}>
-          <div style={{ textAlign: "center", marginBottom: 20 }}>
-            <Typography
-              variant='h5'
-              style={{ fontWeight: 700, textTransform: "uppercase" }}
-            >
-              Login
-            </Typography>
-            <Typography variant='overline' style={{ marginTop: 8 }}>
-              Kindly enter your full name to login.
-            </Typography>
-            {/* {confirmationMsg && (
-              <div style={{ marginTop: 8 }}>
-                <Typography variant="caption" color="primary">
-                  {confirmationMsg}
-                </Typography>
-              </div>
-            )} */}
+	handleConfirmation = () => {};
 
-            {/* {userLoginError.length !== 0 && (
-              <div style={{ marginTop: 8 }}>
-                <Typography variant="caption" style={{ color: "#F4504E" }}>
-                  User Login not successful. Try again!
-                </Typography>
-              </div>
-            )} */}
-          </div>
-          <form className={classes.form}>
-            <div className={classes.textFieldContainer}>
-              <TextField
-                color='primary'
-                size='small'
-                label='Full Name'
-                name='name'
-                value={name}
-                variant='outlined'
-                type='text'
-                fullWidth
-                onChange={(e) => handleChange(e)}
-              />
-            </div>
-          </form>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 16,
-            }}
-          >
-            <Button
-              variant='contained'
-              size='small'
-              endIcon={
-                isUserLoginLoading ? (
-                  <CircularProgress size={16} style={{ color: "#fff" }} />
-                ) : (
-                  <NextIcon />
-                )
-              }
-              onClick={() => handleSubmit()}
-              disabled={name === ""}
-            >
-              Login
-            </Button>
-          </div>
-        </Paper>
-      </div>
-    );
-  }
+	render() {
+		const { email, emailError, invalidEmailError } = this.state;
+		const { handleChange, handleSubmit, handleConfirmation } = this;
+		const { isUserLoginLoading } = this.props;
+
+		const { isUserLoading, location, history, confirmUserRegistration } =
+			this.props;
+
+		const params = new URLSearchParams(location.search);
+
+		const queryEmail = params.get('Email');
+		const queryToken = params.get('Token');
+
+		if (queryEmail && queryToken) {
+			return <UserConfirmation handleConfirmation={handleConfirmation} />;
+		}
+
+		return (
+			<div className='user-login'>
+				<Typography variant='body1' className='user-login-text'>
+					Enter your email to login
+				</Typography>
+				<div className='user-login-input'>
+					<TextField
+						id='outlined-basic'
+						label='Email'
+						variant='outlined'
+						fullWidth
+						name='email'
+						value={email}
+						onChange={handleChange}
+						error={emailError || invalidEmailError}
+						helperText={
+							emailError
+								? 'The email is required'
+								: invalidEmailError
+								? 'Invalid email format'
+								: ''
+						}
+					/>
+				</div>
+				<div className='user-registration-button'>
+					<Button
+						variant='contained'
+						color='secondary'
+						onClick={handleSubmit}
+						fullWidth
+						disabled={isUserLoginLoading}
+					>
+						Submit
+					</Button>
+				</div>
+			</div>
+		);
+	}
 }
 
-const mapStateToProps = (state) => {
-  return {
-    userLoginData: state.users.userLoginData,
-    isUserLoginLoading: state.users.isUserLoginLoading,
-    userLoginError: state.users.userLoginError,
-  };
-};
+const mapStateToProps = (state) => ({ ...state.users });
 
-export default withRouter(
-  withStyles(styles)(connect(mapStateToProps, { loginUser })(UserLogin))
-);
+const mapDispatchToProps = { requestUserLogin };
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(withRouter(UserLogin));

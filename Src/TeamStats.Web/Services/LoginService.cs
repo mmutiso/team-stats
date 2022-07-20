@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using TeamStats.Core.Identity;
 using TeamStats.Web.Models;
 
 namespace TeamStats.Web.Services
@@ -13,7 +16,9 @@ namespace TeamStats.Web.Services
         private readonly ILogger<LoginService> _logger;
 
 
-        public LoginService(TeamStatsContext context, IdentityService identityService)
+        public LoginService(TeamStatsContext context, IdentityService identityService,
+            ApplicationDbContext applicationDbContext, IEmailSender emailSender,
+            ILogger<LoginService> logger, EmailRequestFactory emailRequestFactory)
         {
             _applicationDbContext = applicationDbContext;
             _identityService = identityService;
@@ -24,11 +29,12 @@ namespace TeamStats.Web.Services
 
         public async Task GenerateAndSendMagicLink(string email)
         {
-            var userExists = _applicationDbContext.ApplicationUserRegistration.Where(x => x.Email == email).Any();
+            var userExists = _applicationDbContext.ApplicationUserRegistrations
+                             .Where(x => x.Email == email).Any();
 
             if (!userExists)
             {
-                _logger.Warning($"User with email ${email} does not exist.");
+                _logger.LogWarning($"User with email ${email} does not exist.");
                 return;
             }
 
@@ -36,20 +42,35 @@ namespace TeamStats.Web.Services
 
             var loginRequest = new ApplicationUserLogin(email);
 
-            var request = _emailRequestFactory.CreateForTokenConfirmation(email, loginRequest.ConfirmationToken);
+            await _applicationDbContext.AddAsync(loginRequest);
+            await _applicationDbContext.SaveChangesAsync();
 
-            _applicationDbContext.Add(loginRequest);
-            _applicationDbContext.SaveChangesAsync();
+            var request = _emailRequestFactory.CreateForTokenConfirmation(email, loginRequest.ConfirmationToken, action: "login");
+            Console.WriteLine($"Request: {request}");
 
             await _emailSender.SendEmailAsync(request);
 
             _logger.LogInformation($"The magic link has been sent to {email}");
         }
-        public async Task<bool> ConfirmationMagicLinkIsValid(string email, string confirmationToken)
-        {
-            await Task.CompletedTask;
 
-            throw new NotImplementedException();
+        public async Task<bool> ConfirmMagicLinkIsValid(string email, string confirmationToken)
+        {
+          
+            var user = _applicationDbContext.ApplicationUserLogins
+                            .Where(x => x.Email == email && x.ConfirmationToken == confirmationToken)
+                            .FirstOrDefault();
+
+            if(user == null)
+            {
+                _logger.LogWarning($"User with email ${email} does not exist.");
+                return false;
+            }
+
+            user.DateLoggedIn = DateTime.UtcNow;
+
+            await _applicationDbContext.SaveChangesAsync();
+
+            return true;
         }
     }
 }

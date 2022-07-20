@@ -1,0 +1,14 @@
+.user-registration {
+    padding: 16px;
+    width: 500px;
+}
+
+.user-registration-input {
+    margin-bottom: 16px;
+}
+
+.user-registration-button {
+    display: flex;
+    /* justify-content: flex-end; */
+    
+}

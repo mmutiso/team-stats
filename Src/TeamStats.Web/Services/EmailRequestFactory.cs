@@ -18,11 +18,16 @@ namespace TeamStats.Web.Services
             _runtimeConfigs = runtimeConfigs.Value;
         }
 
-        public SendEmailRequest CreateForTokenConfirmation(string recipient, string token)
+        public SendEmailRequest CreateForTokenConfirmation(string recipient, string token, string action)
         {
-            string subject = "Team stats - Registration Confirmation";
-            string body = $"{_runtimeConfigs.UIAppBaseUrl}/registration?Email={recipient}&Token={token}";
-            // string body = $"http://localhost:3000/registration?Email={recipient}&Token={token}"
+            var subject = "Team stats - Registration Confirmation";
+            var body = $"{_runtimeConfigs.UIAppBaseUrl}/registration?Email={recipient}&Token={token}";
+
+            if (action == "login")
+            {
+                subject = "Team stats - Login Confirmation";
+                body = $"{_runtimeConfigs.UIAppBaseUrl}/login?Email={recipient}&Token={token}";
+            }
 
             var request = new SendEmailRequest
             {

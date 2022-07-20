@@ -41,11 +41,13 @@ namespace TeamStats.Web.Controllers
                 return BadRequest(createUserModel);
 
             var registration = createUserModel.CreateRegistration();
-            _applicationDbContext.Add(registration);
+            await _applicationDbContext.AddAsync(registration);
             await _applicationDbContext.SaveChangesAsync();
 
+
             //Send email to user with token
-            var request = _emailRequestFactory.CreateForTokenConfirmation(createUserModel.Email, registration.ConfirmationToken);
+            var request = _emailRequestFactory.CreateForTokenConfirmation(createUserModel.Email, registration.ConfirmationToken, action: "registration");
+            Console.WriteLine($"Request: {request}");
             await _emailSender.SendEmailAsync(request);            
 
             return Ok($"confirmation email send to {createUserModel.Email}");

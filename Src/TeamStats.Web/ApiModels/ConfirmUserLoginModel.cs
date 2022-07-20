@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TeamStats.Web.ApiModels
 {
     public record ConfirmUserLoginModel
